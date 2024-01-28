@@ -7,7 +7,25 @@
 https://teamsparta.notion.site/1ffcb79d0cfc41c6a86a2b2bd8c68aa2?v=763dbd31df384d2baec10c70b9ad7c31
 
 ## 🔐 ERD
+### **Table**
 
+User Schedule Comment
+
+### **관계 설정**
+
+1. 유저 한명은 여러개의 스케줄을 작성할 수 있다.
+   User : Schedule = 1 : N
+2. 하나의 스케줄은 여러개의 댓글을 작성할 수 있다.
+   Schedule : Comment = 1 : N
+
+### **방향 설정**
+
+1. 유저는 모든 스케줄을 조회할 수 있어야 하는가? (T)
+2. 스케줄을 통해 유저를 조회할 수 있어야 하는가? (F)
+   -> 단방향
+3. 스케줄은 모든 댓글을 조회할 수 있어야 하는가? (T)
+4. 댓글을 통해 스케줄을 조회할 수 있어야 하는가? (F)
+   -> 단방향
 
 ## 📚 기능 정의
 
