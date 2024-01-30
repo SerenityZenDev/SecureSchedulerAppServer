@@ -27,7 +27,7 @@ import lombok.Setter;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long userId;
 
     @Column(nullable = false, unique = true, length = 10)
     private String username;
@@ -36,7 +36,7 @@ public class User {
     private String password;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private List<Schedule> schedules = new ArrayList<>();
 
     public User(String username, String password) {
