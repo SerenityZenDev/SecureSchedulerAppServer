@@ -1,5 +1,9 @@
 package com.sparta.secureschedulerappserver.config;
 
+import com.sparta.secureschedulerappserver.jwt.JwtAuthenticationFilter;
+import com.sparta.secureschedulerappserver.jwt.JwtAuthorizationFilter;
+import com.sparta.secureschedulerappserver.jwt.JwtUtil;
+import com.sparta.secureschedulerappserver.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -19,13 +23,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    private final JwtUtil jwtUtil;
+    private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
 
     @Bean // Spring Security의 인증 매니저 생성 설정
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-        throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
+        return filter;
+    }
+
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 
     @Bean
@@ -46,20 +63,10 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
-        // login 페이지가 없으므로 주석
-//        http.formLogin((formLogin) ->
-//            formLogin
-//                .loginPage("/api/user/login-page").permitAll()
-//        );
+        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        // 필터 관리
-//        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-//        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        // 접근 불가 페이지
-//        http.exceptionHandling((exceptionHandling) ->
-//            exceptionHandling
-//                .accessDeniedPage("/forbidden.html"));
         return http.build();
     }
 }
