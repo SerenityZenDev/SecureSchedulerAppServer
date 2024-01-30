@@ -13,13 +13,16 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "SCHEDULE")
+@NoArgsConstructor
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,14 +40,22 @@ public class Schedule {
     @Column(nullable = false)
     private boolean isCompleted;
 
-    /* 양방향 시 사용
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private User user;
-     */
+
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "schedule_id")
     private List<Comment> comments = new ArrayList<>();
+
+    public Schedule(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.createAt = LocalDateTime.now();
+        this.isCompleted = false;
+    }
 
 }
