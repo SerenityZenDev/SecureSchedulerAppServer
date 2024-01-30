@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -53,4 +54,28 @@ public class ScheduleService {
     }
 
 
+    @Transactional
+    public ScheduleResponseDto updateSchedule(Long scheduleId,
+        ScheduleRequestDto scheduleRequestDto, UserDetailsImpl userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+        Schedule schedule = scheduleRepository.findByUser_UserId(user.getUserId()).get(
+            (int) (scheduleId-1));
+
+        schedule.update(scheduleRequestDto);
+        ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule, user.getUsername());
+
+        return scheduleResponseDto;
+    }
+
+    @Transactional
+    public ScheduleResponseDto completeSchedule(Long scheduleId, UserDetailsImpl userDetails) {
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+            Schedule schedule = scheduleRepository.findByUser_UserId(user.getUserId()).get(
+                (int) (scheduleId-1));
+
+            schedule.complete();
+            ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule, user.getUsername());
+
+            return scheduleResponseDto;
+    }
 }

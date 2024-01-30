@@ -1,5 +1,6 @@
 package com.sparta.secureschedulerappserver.entity;
 
+import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,4 +59,13 @@ public class Schedule {
         this.isCompleted = false;
     }
 
+
+    public void update(ScheduleRequestDto scheduleRequestDto) {
+        this.title = scheduleRequestDto.getTitle();
+        this.content = scheduleRequestDto.getContent();
+    }
+
+    public void complete() {
+        this.isCompleted = true;
+    }
 }

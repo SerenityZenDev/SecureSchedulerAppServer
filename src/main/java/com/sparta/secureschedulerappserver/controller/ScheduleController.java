@@ -42,12 +42,17 @@ public class ScheduleController {
     }
 
     @PatchMapping("/{scheduleId}")
-    public ScheduleResponseDto updateSchedule(){
-        return null;
+    public ScheduleResponseDto updateSchedule(@PathVariable Long scheduleId,
+        @RequestBody ScheduleRequestDto scheduleRequestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails){
+        ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(scheduleId, scheduleRequestDto,userDetails);
+        return scheduleResponseDto;
     }
 
-    @DeleteMapping("/{scheduleId}")
-    public ScheduleResponseDto deleteSchedule(){
-        return null;
+    @PatchMapping("/{scheduleId}/complete")
+    public ScheduleResponseDto completeSchedule(@PathVariable Long scheduleId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails){
+        ScheduleResponseDto scheduleResponseDto = scheduleService.completeSchedule(scheduleId, userDetails);
+        return scheduleResponseDto;
     }
 }
