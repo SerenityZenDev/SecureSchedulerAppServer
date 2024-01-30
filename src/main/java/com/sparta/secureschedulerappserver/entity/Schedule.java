@@ -48,7 +48,7 @@ public class Schedule {
 
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "schedule_id")
+    @JoinColumn(name = "scheduleId")
     private List<Comment> comments = new ArrayList<>();
 
     public Schedule(String title, String content, User user) {
