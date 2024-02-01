@@ -2,6 +2,7 @@ package com.sparta.secureschedulerappserver.service;
 
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.entity.User;
+import com.sparta.secureschedulerappserver.exception.DuplicateUsernameException;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +25,7 @@ public class UserService {
 
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        if (checkUsername.isPresent()) throw new DuplicateUsernameException();
 
         // 사용자 등록
         User user = new User(username, password);
