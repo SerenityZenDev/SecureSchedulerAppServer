@@ -1,5 +1,7 @@
 package com.sparta.secureschedulerappserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,7 +43,7 @@ public class Schedule {
     @Column(nullable = false)
     private boolean isCompleted;
 
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;

@@ -1,10 +1,12 @@
 package com.sparta.secureschedulerappserver.controller;
 
+import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
 import com.sparta.secureschedulerappserver.entity.Schedule;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import com.sparta.secureschedulerappserver.service.ScheduleService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,26 +26,26 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("")
-    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ScheduleResponseDto createSchedule(@Valid @RequestBody ScheduleRequestDto scheduleRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         ScheduleResponseDto scheduleResponseDto =  scheduleService.createSchedule(scheduleRequestDto, userDetails);
         return scheduleResponseDto;
     }
 
     @GetMapping("/{scheduleId}")
-    public ScheduleResponseDto readSchedule(@PathVariable Long scheduleId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        ScheduleResponseDto scheduleResponseDto = scheduleService.readSchedule(scheduleId, userDetails);
+    public ScheduleResponseDto readSchedule(@PathVariable Long scheduleId){
+        ScheduleResponseDto scheduleResponseDto = scheduleService.readSchedule(scheduleId);
         return scheduleResponseDto;
     }
 
     @GetMapping("")
-    public List<ScheduleResponseDto> readSchedule(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        List<ScheduleResponseDto> scheduleResponseDtos = scheduleService.readSchedules(userDetails);
-        return scheduleResponseDtos;
+    public ScheduleListResponseDto readSchedule(){
+        ScheduleListResponseDto scheduleListResponseDto = scheduleService.readSchedules();
+        return scheduleListResponseDto;
     }
 
     @PatchMapping("/{scheduleId}")
     public ScheduleResponseDto updateSchedule(@PathVariable Long scheduleId,
-        @RequestBody ScheduleRequestDto scheduleRequestDto,
+        @Valid @RequestBody ScheduleRequestDto scheduleRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
         ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(scheduleId, scheduleRequestDto,userDetails);
         return scheduleResponseDto;

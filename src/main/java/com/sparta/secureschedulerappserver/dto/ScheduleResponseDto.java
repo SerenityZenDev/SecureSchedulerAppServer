@@ -23,4 +23,19 @@ public class ScheduleResponseDto {
         this.isCompleted = schedule.isCompleted();
     }
 
+    public ScheduleResponseDto(Schedule schedule) {
+        this.title = schedule.getTitle();
+        this.content = schedule.getContent();
+        this.username = schedule.getUser().getUsername();
+        this.createAt = schedule.getCreateAt();
+        this.isCompleted = schedule.isCompleted();
+    }
+
+    public ScheduleResponseDto(ScheduleResponseDto scheduleResponseDto) {
+        this.title = scheduleResponseDto.getTitle();
+        this.content = scheduleResponseDto.getContent();
+        this.username = scheduleResponseDto.getUsername();
+        this.createAt = scheduleResponseDto.getCreateAt();
+        this.isCompleted = scheduleResponseDto.isCompleted();
+    }
 }

@@ -10,4 +10,6 @@ public class ScheduleRequestDto {
     @NotBlank
     private String content;
 
+
+
 }
