@@ -7,6 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class ScheduleListResponseDto {
+
     private Map<String, List<ScheduleResponseDto>> scheduleByName;
 
     public ScheduleListResponseDto(Map<String, List<ScheduleResponseDto>> scheduleByName) {

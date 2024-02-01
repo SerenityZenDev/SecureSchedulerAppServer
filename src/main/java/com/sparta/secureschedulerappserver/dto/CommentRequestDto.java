@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class CommentRequestDto {
+
     @NotBlank
     private String comment;
 }

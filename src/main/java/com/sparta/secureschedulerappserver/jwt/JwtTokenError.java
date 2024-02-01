@@ -9,12 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenError {
-    public void messageToClient(HttpServletResponse response, int httpstatus, String message, String messageType)
+
+    public void messageToClient(HttpServletResponse response, int httpstatus, String message,
+        String messageType)
         throws IOException {
         response.setStatus(httpstatus);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-
 
         // 메시지를 JSON 형식으로 클라이언트에게 반환
         ObjectMapper objectMapper = new ObjectMapper();

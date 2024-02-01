@@ -31,9 +31,9 @@ public class WebSecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
 
-
     @Bean // Spring Security의 인증 매니저 생성 설정
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+        throws Exception {
         return configuration.getAuthenticationManager();
     }
 
@@ -66,8 +66,6 @@ public class WebSecurityConfig {
                 .requestMatchers("/user/**").permitAll() // '/user/'로 시작하는 요청 모두 접근 허가
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
-
-
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

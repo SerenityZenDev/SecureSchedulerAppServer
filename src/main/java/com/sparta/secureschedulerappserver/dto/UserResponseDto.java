@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public class UserResponseDto {
+
     private final String message;
     private final HttpStatus httpStatus;
 }

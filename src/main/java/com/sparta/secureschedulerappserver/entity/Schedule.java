@@ -1,7 +1,6 @@
 package com.sparta.secureschedulerappserver.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,7 +15,6 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +25,7 @@ import lombok.Setter;
 @Table(name = "SCHEDULE")
 @NoArgsConstructor
 public class Schedule {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;

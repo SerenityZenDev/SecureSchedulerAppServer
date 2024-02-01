@@ -9,14 +9,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 @Slf4j(topic = "LoggingFilter")
 @Order(1)
 public class LoggingFilter implements Filter {
+
     @Override
     public void doFilter(
-        ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
         // 전처리
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String url = httpServletRequest.getRequestURI();

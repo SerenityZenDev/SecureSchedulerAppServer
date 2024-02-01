@@ -4,13 +4,10 @@ import com.sparta.secureschedulerappserver.dto.CommentRequestDto;
 import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
 import com.sparta.secureschedulerappserver.entity.Comment;
 import com.sparta.secureschedulerappserver.entity.Schedule;
-import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
-import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
 import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationException;
 import com.sparta.secureschedulerappserver.repository.CommentRepository;
 import com.sparta.secureschedulerappserver.repository.ScheduleRepository;
-import com.sparta.secureschedulerappserver.repository.UserRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,10 +19,10 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final ScheduleRepository scheduleRepository;
-    private final UserRepository userRepository;
 
 
-    public CommentResponseDto createComment(Long scheduleId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
+    public CommentResponseDto createComment(Long scheduleId, CommentRequestDto commentRequestDto,
+        UserDetailsImpl userDetails) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
             () -> new NotFoundScheduleException()
         );
@@ -36,15 +33,15 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long commentId,  CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
+    public CommentResponseDto updateComment(Long commentId, CommentRequestDto commentRequestDto,
+        UserDetailsImpl userDetails) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
             () -> new IllegalArgumentException()
         );
 
-        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())){
+        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())) {
             throw new IllegalArgumentException();
         }
-
 
         comment.update(commentRequestDto);
 
@@ -57,7 +54,7 @@ public class CommentService {
             () -> new UnauthorizedOperationException()
         );
 
-        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())){
+        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())) {
             throw new IllegalArgumentException();
         }
 

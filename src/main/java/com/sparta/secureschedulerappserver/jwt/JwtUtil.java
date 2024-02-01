@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class JwtUtil {
+
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
     // 사용자 권한 값의 KEY
@@ -69,7 +70,8 @@ public class JwtUtil {
     // JWT Cookie 에 저장
     public void addJwtToCookie(String token, HttpServletResponse res) {
         try {
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+            token = URLEncoder.encode(token, "utf-8")
+                .replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
             Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
             cookie.setPath("/");
@@ -80,6 +82,7 @@ public class JwtUtil {
             logger.error(e.getMessage());
         }
     }
+
     // Cookie에 들어있던 JWT 토큰을 Substring
     // JWT 토큰 substring
     public String substringToken(String tokenValue) {
@@ -89,6 +92,7 @@ public class JwtUtil {
         logger.error("Not Found Token");
         throw new NullPointerException("Not Found Token");
     }
+
     // JWT검증
     // 토큰 검증
     public boolean validateToken(String token) {
@@ -106,6 +110,7 @@ public class JwtUtil {
         }
         return false;
     }
+
     // JWT에서 사용자 정보 가져오기
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
@@ -115,11 +120,12 @@ public class JwtUtil {
     // HttpServletRequest 에서 Cookie Value : JWT 가져오기
     public String getTokenFromRequest(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
-                        return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
+                        return URLDecoder.decode(cookie.getValue(),
+                            "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
                     } catch (UnsupportedEncodingException e) {
                         return null;
                     }

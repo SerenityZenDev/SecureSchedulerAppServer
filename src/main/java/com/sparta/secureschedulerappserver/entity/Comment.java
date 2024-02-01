@@ -20,6 +20,7 @@ import lombok.Setter;
 @Table(name = "COMMENT")
 @NoArgsConstructor
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
@@ -34,6 +35,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "scheduleId")
     private Schedule schedule;
+
     public Comment(CommentRequestDto commentRequestDto, Schedule schedule, User user) {
         this.comment = commentRequestDto.getComment();
         this.schedule = schedule;
