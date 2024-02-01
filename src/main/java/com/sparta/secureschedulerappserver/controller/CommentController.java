@@ -4,6 +4,7 @@ import com.sparta.secureschedulerappserver.dto.CommentRequestDto;
 import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import com.sparta.secureschedulerappserver.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,8 +23,8 @@ public class CommentController {
 
     @PostMapping("")
     public CommentResponseDto createComment(
-        @PathVariable String scheduleId,
-        @RequestBody CommentRequestDto commentRequestDto,
+        @PathVariable Long scheduleId,
+        @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
         CommentResponseDto commentResponseDto = commentService.createComment(scheduleId,commentRequestDto, userDetails);
         return commentResponseDto;
@@ -31,19 +32,19 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     public CommentResponseDto updateComment(
-        @PathVariable int commentId, @PathVariable String scheduleId,
-        @RequestBody CommentRequestDto commentRequestDto,
+        @PathVariable Long commentId,
+        @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
-        CommentResponseDto commentResponseDto = commentService.updateComment(commentId,scheduleId,commentRequestDto, userDetails);
+        CommentResponseDto commentResponseDto = commentService.updateComment(commentId,commentRequestDto, userDetails);
         return commentResponseDto;
     }
 
     @DeleteMapping("/{commentId}")
     public CommentResponseDto deleteComment(
-        @PathVariable int commentId, @PathVariable String scheduleId,
-        @RequestBody CommentRequestDto commentRequestDto,
+        @PathVariable Long commentId,
+        @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
-        CommentResponseDto commentResponseDto = commentService.deleteComment(commentId,scheduleId,commentRequestDto, userDetails);
+        CommentResponseDto commentResponseDto = commentService.deleteComment(commentId,commentRequestDto, userDetails);
         return commentResponseDto;
     }
 

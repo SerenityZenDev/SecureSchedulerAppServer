@@ -28,11 +28,16 @@ public class Comment {
     private String comment;
 
     @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "scheduleId")
     private Schedule schedule;
-    public Comment(CommentRequestDto commentRequestDto, Schedule schedule) {
+    public Comment(CommentRequestDto commentRequestDto, Schedule schedule, User user) {
         this.comment = commentRequestDto.getComment();
         this.schedule = schedule;
+        this.user = user;
     }
 
     public void update(CommentRequestDto commentRequestDto) {

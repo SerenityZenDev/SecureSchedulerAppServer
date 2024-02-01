@@ -5,6 +5,9 @@ import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
 import com.sparta.secureschedulerappserver.entity.Comment;
 import com.sparta.secureschedulerappserver.entity.Schedule;
 import com.sparta.secureschedulerappserver.entity.User;
+import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
+import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
+import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationException;
 import com.sparta.secureschedulerappserver.repository.CommentRepository;
 import com.sparta.secureschedulerappserver.repository.ScheduleRepository;
 import com.sparta.secureschedulerappserver.repository.UserRepository;
@@ -22,30 +25,41 @@ public class CommentService {
     private final UserRepository userRepository;
 
 
-    public CommentResponseDto createComment(String scheduleId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        Schedule schedule = scheduleRepository.findByUser_UserId(user.getUserId()).get(Integer.parseInt(scheduleId)-1);
-        Comment comment = new Comment(commentRequestDto, schedule);
+    public CommentResponseDto createComment(Long scheduleId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+            () -> new NotFoundScheduleException()
+        );
+        Comment comment = new Comment(commentRequestDto, schedule, userDetails.getUser());
         commentRepository.save(comment);
 
         return new CommentResponseDto(comment);
     }
 
     @Transactional
-    public CommentResponseDto updateComment(int commentId, String scheduleId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        Schedule schedule = scheduleRepository.findByUser_UserId(user.getUserId()).get(Integer.parseInt(scheduleId)-1);
-        Comment comment = commentRepository.findBySchedule_ScheduleId(schedule.getScheduleId()).get(commentId-1);
+    public CommentResponseDto updateComment(Long commentId,  CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+            () -> new IllegalArgumentException()
+        );
+
+        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())){
+            throw new IllegalArgumentException();
+        }
+
 
         comment.update(commentRequestDto);
 
         return new CommentResponseDto(comment);
     }
 
-    public CommentResponseDto deleteComment(int commentId, String scheduleId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        Schedule schedule = scheduleRepository.findByUser_UserId(user.getUserId()).get(Integer.parseInt(scheduleId)-1);
-        Comment comment = commentRepository.findBySchedule_ScheduleId(schedule.getScheduleId()).get(commentId-1);
+    public CommentResponseDto deleteComment(Long commentId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+            () -> new UnauthorizedOperationException()
+        );
+
+        if (!(comment.getUser().getUsername() == userDetails.getUser().getUsername())){
+            throw new IllegalArgumentException();
+        }
 
         commentRepository.delete(comment);
 
