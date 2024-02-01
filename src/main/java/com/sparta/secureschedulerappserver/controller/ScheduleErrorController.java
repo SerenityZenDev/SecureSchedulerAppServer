@@ -1,6 +1,7 @@
 package com.sparta.secureschedulerappserver.controller;
 
 import com.sparta.secureschedulerappserver.exception.DuplicateUsernameException;
+import com.sparta.secureschedulerappserver.exception.NotFoundCommentException;
 import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
 import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
 import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationException;
@@ -25,6 +26,12 @@ public class ScheduleErrorController {
 
     @ExceptionHandler(NotFoundScheduleException.class)
     public ResponseEntity<ExceptionDto> NotFoundSchedule(NotFoundScheduleException e) {
+        return ResponseEntity.badRequest()
+            .body(new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(NotFoundCommentException.class)
+    public ResponseEntity<ExceptionDto> NotFoundComment(NotFoundCommentException e) {
         return ResponseEntity.badRequest()
             .body(new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST));
     }

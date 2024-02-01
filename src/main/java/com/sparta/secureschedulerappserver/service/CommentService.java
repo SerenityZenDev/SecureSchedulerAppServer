@@ -4,6 +4,7 @@ import com.sparta.secureschedulerappserver.dto.CommentRequestDto;
 import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
 import com.sparta.secureschedulerappserver.entity.Comment;
 import com.sparta.secureschedulerappserver.entity.Schedule;
+import com.sparta.secureschedulerappserver.exception.NotFoundCommentException;
 import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
 import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationException;
 import com.sparta.secureschedulerappserver.repository.CommentRepository;
@@ -24,7 +25,7 @@ public class CommentService {
     public CommentResponseDto createComment(Long scheduleId, CommentRequestDto commentRequestDto,
         UserDetailsImpl userDetails) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            () -> new NotFoundScheduleException()
+            NotFoundScheduleException::new
         );
         Comment comment = new Comment(commentRequestDto, schedule, userDetails.getUser());
         commentRepository.save(comment);
@@ -36,11 +37,11 @@ public class CommentService {
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto commentRequestDto,
         UserDetailsImpl userDetails) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-            () -> new IllegalArgumentException()
+            NotFoundCommentException::new
         );
 
         if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())) {
-            throw new IllegalArgumentException();
+            throw new UnauthorizedOperationException();
         }
 
         comment.update(commentRequestDto);
@@ -51,11 +52,11 @@ public class CommentService {
     public void deleteComment(Long commentId, UserDetailsImpl userDetails) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-            () -> new UnauthorizedOperationException()
+            NotFoundCommentException::new
         );
 
         if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())) {
-            throw new IllegalArgumentException();
+            throw new UnauthorizedOperationException();
         }
 
         commentRepository.delete(comment);
