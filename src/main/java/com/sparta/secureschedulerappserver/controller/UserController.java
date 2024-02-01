@@ -3,6 +3,7 @@ package com.sparta.secureschedulerappserver.controller;
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.dto.UserResponseDto;
 import com.sparta.secureschedulerappserver.entity.User;
+import com.sparta.secureschedulerappserver.exception.dto.ExceptionDto;
 import com.sparta.secureschedulerappserver.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -25,13 +26,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/join")
-    public ResponseEntity<List<UserResponseDto>> join (@Valid @RequestBody UserRequestDto userRequestDto, BindingResult bindingResult){
-        List<UserResponseDto> userResponseDtos = new ArrayList<>();
+    public ResponseEntity<UserResponseDto> join (@Valid @RequestBody UserRequestDto userRequestDto){
 
         userService.join(userRequestDto);
         String successMessage = "회원가입이 성공적으로 완료되었습니다.";
-        userResponseDtos.add(new UserResponseDto(successMessage, HttpStatus.OK));
 
-        return new ResponseEntity<>(userResponseDtos, HttpStatus.OK);
+        return ResponseEntity.ok().body(new UserResponseDto(successMessage,HttpStatus.OK ));
     }
 }

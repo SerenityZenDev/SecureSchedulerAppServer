@@ -51,18 +51,17 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
-    public CommentResponseDto deleteComment(Long commentId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
+    public void deleteComment(Long commentId, UserDetailsImpl userDetails) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
             () -> new UnauthorizedOperationException()
         );
 
-        if (!(comment.getUser().getUsername() == userDetails.getUser().getUsername())){
+        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())){
             throw new IllegalArgumentException();
         }
 
         commentRepository.delete(comment);
 
-        return new CommentResponseDto(comment);
     }
 }

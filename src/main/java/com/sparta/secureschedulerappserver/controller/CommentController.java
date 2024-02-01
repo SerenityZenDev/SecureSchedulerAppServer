@@ -1,11 +1,15 @@
 package com.sparta.secureschedulerappserver.controller;
 
+import com.sparta.secureschedulerappserver.dto.CommentDeleteDto;
 import com.sparta.secureschedulerappserver.dto.CommentRequestDto;
 import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
+import com.sparta.secureschedulerappserver.dto.UserResponseDto;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import com.sparta.secureschedulerappserver.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,12 +44,12 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public CommentResponseDto deleteComment(
+    public ResponseEntity<CommentDeleteDto> deleteComment(
         @PathVariable Long commentId,
-        @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
-        CommentResponseDto commentResponseDto = commentService.deleteComment(commentId,commentRequestDto, userDetails);
-        return commentResponseDto;
+        commentService.deleteComment(commentId, userDetails);
+        String successMessage = "삭제가 정상적으로 처리되었습니다.";
+        return ResponseEntity.ok().body(new CommentDeleteDto(successMessage,HttpStatus.OK ));
     }
 
 }
