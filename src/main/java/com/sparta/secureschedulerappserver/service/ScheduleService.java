@@ -11,6 +11,7 @@ import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationExcept
 import com.sparta.secureschedulerappserver.repository.ScheduleRepository;
 import com.sparta.secureschedulerappserver.repository.UserRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class ScheduleService {
         String username = userDetails.getUsername();
 
         User user = userRepository.findByUsername(username).orElseThrow(
-            () -> new NotFoundUserException()
+            NotFoundUserException::new
         );
 
         Schedule schedule = new Schedule(title, content, user);
@@ -45,7 +46,7 @@ public class ScheduleService {
 
     public ScheduleResponseDto readSchedule(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            () -> new NotFoundScheduleException()
+            NotFoundScheduleException::new
         );
         return new ScheduleResponseDto(schedule);
     }
@@ -70,44 +71,53 @@ public class ScheduleService {
         return new ScheduleListResponseDto(scheduleByName);
     }
 
+    public List<ScheduleResponseDto> findSchedules(String text) {
+        List<Schedule> schedules = scheduleRepository.findAllByTitleContaining(text);
+        List<ScheduleResponseDto> scheduleResponseDtos = new ArrayList<>();
+
+        for (Schedule schedule : schedules) {
+            scheduleResponseDtos.add(new ScheduleResponseDto(schedule));
+        }
+
+        return scheduleResponseDtos;
+    }
 
     @Transactional
     public ScheduleResponseDto updateSchedule(Long scheduleId,
         ScheduleRequestDto scheduleRequestDto, UserDetailsImpl userDetails) {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
-            () -> new NotFoundUserException()
+            NotFoundUserException::new
         );
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            () -> new NotFoundScheduleException()
+            NotFoundScheduleException::new
         );
         if (!user.getUsername().equals(schedule.getUser().getUsername())) {
             throw new UnauthorizedOperationException();
         }
 
         schedule.update(scheduleRequestDto);
-        ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule,
-            user.getUsername());
 
-        return scheduleResponseDto;
+        return new ScheduleResponseDto(schedule,
+            user.getUsername());
     }
 
     @Transactional
     public ScheduleResponseDto completeSchedule(Long scheduleId, UserDetailsImpl userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
-            () -> new NotFoundUserException()
+            NotFoundUserException::new
         );
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            () -> new NotFoundScheduleException()
+            NotFoundScheduleException::new
         );
         if (!user.getUsername().equals(schedule.getUser().getUsername())) {
             throw new UnauthorizedOperationException();
         }
 
         schedule.complete();
-        ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule,
-            user.getUsername());
 
-        return scheduleResponseDto;
+        return new ScheduleResponseDto(schedule,
+            user.getUsername());
     }
+
 }

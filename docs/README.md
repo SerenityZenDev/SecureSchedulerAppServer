@@ -93,62 +93,10 @@ https://teamsparta.notion.site/1ffcb79d0cfc41c6a86a2b2bd8c68aa2?v=763dbd31df384d
     - DB에 이미 존재하는 username으로 회원가입을 요청한 경우 "중복된 username 입니다." 라는 에러메시지와 statusCode: 400을 Client에 반환하기
     - 로그인 시, 전달된 username과 password 중 맞지 않는 정보가 있다면 "회원을 찾을 수 없습니다."라는 에러메시지와 statusCode: 400을 Client에 반환하기
 
-- [x]  **개인 노트**
-  - 전체조회를 아래처럼 바꾸기
-    - {
-      "admin4": [
-              {
-              "title": "title",
-              "content": "content",
-              "username": "admin4",
-              "createAt": "2024-01-31T17:18:11.572546",
-              "completed": false
-              },
-              {
-              "title": "title2",
-              "content": "content2",
-              "username": "admin4",
-              "createAt": "2024-01-31T17:18:15.968918",
-              "completed": false
-              },
-              {
-              "title": "title3",
-              "content": "content3",
-              "username": "admin4",
-              "createAt": "2024-01-31T17:18:23.329135",
-              "completed": false
-              }
-      ],
-      "qwer": [
-              {
-              "title": "제목3",
-              "content": "내용3",
-              "username": "qwer",
-              "createAt": "2024-01-30T20:51:00.976906",
-              "completed": false
-              },
-              {
-              "title": "제목3",
-              "content": "내용3",
-              "username": "qwer",
-              "createAt": "2024-01-30T20:58:12.543317",
-              "completed": false
-              }
-      ],
-      "wjstjrqo": [
-              {
-              "title": "title",
-              "content": "content",
-              "username": "wjstjrqo",
-              "createAt": "2024-01-30T17:17:43.47261",
-              "completed": false
-              },
-              {
-              "title": "제목",
-              "content": "내용",
-              "username": "wjstjrqo",
-              "createAt": "2024-01-30T17:20:43.43415",
-              "completed": false
-              }
-      ]
-      }
+- [ ] **더 나아가기**
+  - [ ] 전체 할일카드 목록에서 완료된 카드들은 숨김처리 하는 기능을 추가해주세요!
+  - [ ] 할일카드를 작성자만 볼 수 있도록 비공개 하는 기능을 추가해주세요!
+  - [x] 할일카드 제목으로 검색하여 목록을 출력하는 기능을 추가해주세요!
+  - [x] AccessToken, RefreshToken에 대해 구글링해 보고 RefreshToken을 적용해 보세요!
+  - [ ] 프로젝트에 swagger 를 구글링해 보고 적용해 보세요!
+    - swagger란? Open Api Specification(OAS)를 위한 프레임워크 입니다. API들이 가지고 있는 스펙(spec)을 명세, 관리할 수 있으며, 백엔드와 프론트엔드가 협업할 때 사용할 수 있습니다!
