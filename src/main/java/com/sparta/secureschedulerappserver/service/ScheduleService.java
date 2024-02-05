@@ -71,6 +71,26 @@ public class ScheduleService {
         return new ScheduleListResponseDto(scheduleByName);
     }
 
+    public ScheduleListResponseDto readUncompleteSchedules() {
+        List<User> users = userRepository.findAll();
+        Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
+
+        for (User user : users) {
+            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndIsCompletedFalse(user.getUserId());
+            if (schedules.isEmpty()) {
+                continue;
+            }
+
+            List<ScheduleResponseDto> scheduleResponseDtos = schedules.stream()
+                .map(ScheduleResponseDto::new)
+                .collect(Collectors.toList());
+
+            scheduleByName.put(user.getUsername(), scheduleResponseDtos);
+        }
+
+        return new ScheduleListResponseDto(scheduleByName);
+    }
+
     public List<ScheduleResponseDto> findSchedules(String text) {
         List<Schedule> schedules = scheduleRepository.findAllByTitleContaining(text);
         List<ScheduleResponseDto> scheduleResponseDtos = new ArrayList<>();
@@ -119,5 +139,6 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule,
             user.getUsername());
     }
+
 
 }

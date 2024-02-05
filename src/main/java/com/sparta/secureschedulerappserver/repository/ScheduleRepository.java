@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     List<Schedule> findByUser_UserId(Long userId);
+    List<Schedule> findByUser_UserIdAndIsCompletedFalse(Long userId);
     List<Schedule> findAllByTitleContaining(String title);
+
 }

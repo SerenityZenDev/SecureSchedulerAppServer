@@ -43,6 +43,11 @@ public class ScheduleController {
         return scheduleService.readSchedules();
     }
 
+    @GetMapping("/hide-completed")
+    public ScheduleListResponseDto readUncompleteSchedule() {
+        return scheduleService.readUncompleteSchedules();
+    }
+
     @GetMapping("/search")
     public List<ScheduleResponseDto> findSchedule(@RequestParam String text){
         return scheduleService.findSchedules(text);
