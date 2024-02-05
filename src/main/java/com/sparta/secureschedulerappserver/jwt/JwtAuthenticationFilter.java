@@ -54,8 +54,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("로그인 성공 및 JWT 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
-        String token = jwtUtil.createToken(username);
-        jwtUtil.addJwtToCookie(token, response);
+        // Access Token 생성
+        String accessToken = jwtUtil.createAccessToken(username);
+        jwtUtil.addAccessTokenToCookie(accessToken, response);
+        // Refresh Token 생성
+        String refreshToken = jwtUtil.createRefreshToken(username);
+        jwtUtil.addRefreshTokenToCookie(refreshToken, response);
 
         String message = "로그인 성공";
         jwtTokenError.messageToClient(response, 200, message, "success");

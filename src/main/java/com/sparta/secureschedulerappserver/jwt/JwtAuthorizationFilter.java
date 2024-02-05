@@ -2,6 +2,7 @@ package com.sparta.secureschedulerappserver.jwt;
 
 import com.sparta.secureschedulerappserver.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,20 +32,37 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
         throws ServletException, IOException {
 
-        String tokenValue = jwtUtil.getTokenFromRequest(req);
+        String accessTokenValue = jwtUtil.getAccessTokenFromRequest(req);
+        String claimToToken;
 
-        if (StringUtils.hasText(tokenValue)) {
+        if (StringUtils.hasText(accessTokenValue)) {
             // JWT 토큰 substring
-            tokenValue = jwtUtil.substringToken(tokenValue);
-            log.info(tokenValue);
+            accessTokenValue = jwtUtil.substringToken(accessTokenValue);
+            log.info(accessTokenValue);
+            claimToToken = accessTokenValue;
 
-            if (!jwtUtil.validateToken(tokenValue)) {
-                jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
+            try{
+                if (!jwtUtil.validateAccessToken(accessTokenValue)) {
+                    jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
+                    return;
+                }
+            }catch (ExpiredJwtException e) {
+                logger.error("Expired JWT token, 만료된 JWT AccessToken 입니다.");
+                String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(req);
+                refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
 
-                return;
+                if (StringUtils.hasText(refreshTokenValue) && jwtUtil.validateRefreshToken(refreshTokenValue)){
+                    String newAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserInfoFromToken(refreshTokenValue).getSubject());
+                    jwtUtil.addAccessTokenToCookie(newAccessToken, res);
+                    claimToToken = jwtUtil.substringToken(newAccessToken);
+                } else {
+                    jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
+                    return;
+                }
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+            Claims info = jwtUtil.getUserInfoFromToken(claimToToken);
 
             try {
                 setAuthentication(info.getSubject());
