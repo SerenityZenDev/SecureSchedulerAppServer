@@ -42,7 +42,9 @@ public class Schedule {
     @Column(nullable = false)
     private boolean isCompleted;
 
-    @JsonIgnore
+    @Column(nullable = false)
+    private boolean hidden;
+
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
@@ -58,6 +60,7 @@ public class Schedule {
         this.user = user;
         this.createAt = LocalDateTime.now();
         this.isCompleted = false;
+        this.hidden = false;
     }
 
 
@@ -69,4 +72,6 @@ public class Schedule {
     public void complete() {
         this.isCompleted = true;
     }
+
+    public void optionHidden(){this.hidden = true;}
 }

@@ -13,6 +13,7 @@ public class ScheduleResponseDto {
     private String username;
     private LocalDateTime createAt;
     private boolean isCompleted;
+    private boolean hidden;
 
     public ScheduleResponseDto(Schedule schedule, String username) {
         this.title = schedule.getTitle();
@@ -20,6 +21,7 @@ public class ScheduleResponseDto {
         this.username = username;
         this.createAt = schedule.getCreateAt();
         this.isCompleted = schedule.isCompleted();
+        this.hidden = schedule.isHidden();
     }
 
     public ScheduleResponseDto(Schedule schedule) {
@@ -28,6 +30,7 @@ public class ScheduleResponseDto {
         this.username = schedule.getUser().getUsername();
         this.createAt = schedule.getCreateAt();
         this.isCompleted = schedule.isCompleted();
+        this.hidden = schedule.isHidden();
     }
 
     public ScheduleResponseDto(ScheduleResponseDto scheduleResponseDto) {
@@ -36,5 +39,6 @@ public class ScheduleResponseDto {
         this.username = scheduleResponseDto.getUsername();
         this.createAt = scheduleResponseDto.getCreateAt();
         this.isCompleted = scheduleResponseDto.isCompleted();
+        this.hidden = scheduleResponseDto.isHidden();
     }
 }

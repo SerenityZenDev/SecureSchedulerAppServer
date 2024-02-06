@@ -43,7 +43,13 @@ public class ScheduleController {
         return scheduleService.readSchedules();
     }
 
-    @GetMapping("/hide-completed")
+    @GetMapping("/mySchedules")
+    public ScheduleListResponseDto readMySchedules(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return scheduleService.readMySchedules(userDetails);
+    }
+
+
+    @GetMapping("/uncompleted")
     public ScheduleListResponseDto readUncompleteSchedule() {
         return scheduleService.readUncompleteSchedules();
     }
@@ -57,14 +63,18 @@ public class ScheduleController {
     public ScheduleResponseDto updateSchedule(@PathVariable Long scheduleId,
         @Valid @RequestBody ScheduleRequestDto scheduleRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return scheduleService.updateSchedule(scheduleId,
-            scheduleRequestDto, userDetails);
+        return scheduleService.updateSchedule(scheduleId, scheduleRequestDto, userDetails);
     }
 
     @PatchMapping("/{scheduleId}/complete")
     public ScheduleResponseDto completeSchedule(@PathVariable Long scheduleId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return scheduleService.completeSchedule(scheduleId,
-            userDetails);
+        return scheduleService.completeSchedule(scheduleId, userDetails);
+    }
+
+    @PatchMapping("/{scheduleId}/hide")
+    public ScheduleResponseDto hideSchedule(@PathVariable Long scheduleId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return scheduleService.hideSchedule(scheduleId, userDetails);
     }
 }

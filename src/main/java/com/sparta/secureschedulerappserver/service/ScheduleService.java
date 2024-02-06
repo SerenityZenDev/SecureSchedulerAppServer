@@ -56,7 +56,7 @@ public class ScheduleService {
         Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
 
         for (User user : users) {
-            List<Schedule> schedules = scheduleRepository.findByUser_UserId(user.getUserId());
+            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndHiddenFalse(user.getUserId());
             if (schedules.isEmpty()) {
                 continue;
             }
@@ -71,12 +71,28 @@ public class ScheduleService {
         return new ScheduleListResponseDto(scheduleByName);
     }
 
+    public ScheduleListResponseDto readMySchedules(UserDetailsImpl userDetails) {
+        Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+            NotFoundUserException::new
+        );
+
+        List<Schedule> schedules = scheduleRepository.findByUser_UserId(user.getUserId());
+
+        List<ScheduleResponseDto> scheduleResponseDtos = schedules.stream()
+            .map(ScheduleResponseDto::new)
+            .collect(Collectors.toList());
+
+        scheduleByName.put(user.getUsername(), scheduleResponseDtos);
+        return new ScheduleListResponseDto(scheduleByName);
+    }
+
     public ScheduleListResponseDto readUncompleteSchedules() {
         List<User> users = userRepository.findAll();
         Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
 
         for (User user : users) {
-            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndIsCompletedFalse(user.getUserId());
+            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(user.getUserId());
             if (schedules.isEmpty()) {
                 continue;
             }
@@ -92,7 +108,7 @@ public class ScheduleService {
     }
 
     public List<ScheduleResponseDto> findSchedules(String text) {
-        List<Schedule> schedules = scheduleRepository.findAllByTitleContaining(text);
+        List<Schedule> schedules = scheduleRepository.findAllByTitleContainingAndHiddenFalse(text);
         List<ScheduleResponseDto> scheduleResponseDtos = new ArrayList<>();
 
         for (Schedule schedule : schedules) {
@@ -136,8 +152,24 @@ public class ScheduleService {
 
         schedule.complete();
 
-        return new ScheduleResponseDto(schedule,
-            user.getUsername());
+        return new ScheduleResponseDto(schedule, user.getUsername());
+    }
+
+    @Transactional
+    public ScheduleResponseDto hideSchedule(Long scheduleId, UserDetailsImpl userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+            NotFoundUserException::new
+        );
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+            NotFoundScheduleException::new
+        );
+        if (!user.getUsername().equals(schedule.getUser().getUsername())) {
+            throw new UnauthorizedOperationException();
+        }
+
+        schedule.optionHidden();
+
+        return new ScheduleResponseDto(schedule, user.getUsername());
     }
 
 
