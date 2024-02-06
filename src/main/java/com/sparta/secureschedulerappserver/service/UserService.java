@@ -3,7 +3,6 @@ package com.sparta.secureschedulerappserver.service;
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.exception.DuplicateUsernameException;
-import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

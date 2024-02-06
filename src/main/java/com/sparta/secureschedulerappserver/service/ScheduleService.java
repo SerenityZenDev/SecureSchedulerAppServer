@@ -56,7 +56,8 @@ public class ScheduleService {
         Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
 
         for (User user : users) {
-            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndHiddenFalse(user.getUserId());
+            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndHiddenFalse(
+                user.getUserId());
             if (schedules.isEmpty()) {
                 continue;
             }
@@ -92,7 +93,8 @@ public class ScheduleService {
         Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
 
         for (User user : users) {
-            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(user.getUserId());
+            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(
+                user.getUserId());
             if (schedules.isEmpty()) {
                 continue;
             }

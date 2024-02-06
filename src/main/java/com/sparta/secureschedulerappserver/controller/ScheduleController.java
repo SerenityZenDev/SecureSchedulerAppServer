@@ -44,7 +44,8 @@ public class ScheduleController {
     }
 
     @GetMapping("/mySchedules")
-    public ScheduleListResponseDto readMySchedules(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ScheduleListResponseDto readMySchedules(
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return scheduleService.readMySchedules(userDetails);
     }
 
@@ -55,7 +56,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/search")
-    public List<ScheduleResponseDto> findSchedule(@RequestParam String text){
+    public List<ScheduleResponseDto> findSchedule(@RequestParam String text) {
         return scheduleService.findSchedules(text);
     }
 

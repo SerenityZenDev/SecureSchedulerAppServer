@@ -1,6 +1,5 @@
 package com.sparta.secureschedulerappserver.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -73,5 +72,7 @@ public class Schedule {
         this.isCompleted = true;
     }
 
-    public void optionHidden(){this.hidden = true;}
+    public void optionHidden() {
+        this.hidden = true;
+    }
 }
