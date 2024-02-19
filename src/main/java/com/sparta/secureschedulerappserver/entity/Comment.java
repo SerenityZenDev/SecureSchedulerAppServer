@@ -36,13 +36,21 @@ public class Comment {
     @JoinColumn(name = "scheduleId")
     private Schedule schedule;
 
-    public Comment(CommentRequestDto commentRequestDto, Schedule schedule, User user) {
-        this.comment = commentRequestDto.getComment();
+    //    public Comment(CommentRequestDto commentRequestDto, Schedule schedule, User user) {
+//        this.comment = commentRequestDto.getComment();
+//        this.schedule = schedule;
+//        this.user = user;
+//    }
+    public Comment(String comment, Schedule schedule, User user) {
+        this.comment = comment;
         this.schedule = schedule;
         this.user = user;
     }
 
-    public void update(CommentRequestDto commentRequestDto) {
-        this.comment = commentRequestDto.getComment();
+    //    public void update(CommentRequestDto commentRequestDto) {
+//        this.comment = commentRequestDto.getComment();
+//    }
+    public void update(String comment) {
+        this.comment = comment;
     }
 }

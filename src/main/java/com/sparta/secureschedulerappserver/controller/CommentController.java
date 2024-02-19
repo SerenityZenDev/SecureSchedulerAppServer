@@ -30,9 +30,8 @@ public class CommentController {
         @PathVariable Long scheduleId,
         @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        CommentResponseDto commentResponseDto = commentService.createComment(scheduleId,
+        return commentService.createComment(scheduleId,
             commentRequestDto, userDetails);
-        return commentResponseDto;
     }
 
     @PatchMapping("/{commentId}")
@@ -40,9 +39,8 @@ public class CommentController {
         @PathVariable Long commentId,
         @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        CommentResponseDto commentResponseDto = commentService.updateComment(commentId,
+        return commentService.updateComment(commentId,
             commentRequestDto, userDetails);
-        return commentResponseDto;
     }
 
     @DeleteMapping("/{commentId}")

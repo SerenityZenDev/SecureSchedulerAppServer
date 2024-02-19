@@ -27,7 +27,7 @@ public class CommentService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
             NotFoundScheduleException::new
         );
-        Comment comment = new Comment(commentRequestDto, schedule, userDetails.getUser());
+        Comment comment = new Comment(commentRequestDto.getComment(), schedule, userDetails.getUser());
         commentRepository.save(comment);
 
         return new CommentResponseDto(comment);
@@ -44,7 +44,7 @@ public class CommentService {
             throw new UnauthorizedOperationException();
         }
 
-        comment.update(commentRequestDto);
+        comment.update(commentRequestDto.getComment());
 
         return new CommentResponseDto(comment);
     }

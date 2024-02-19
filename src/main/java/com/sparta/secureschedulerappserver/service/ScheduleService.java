@@ -134,7 +134,7 @@ public class ScheduleService {
             throw new UnauthorizedOperationException();
         }
 
-        schedule.update(scheduleRequestDto);
+        schedule.update(scheduleRequestDto.getTitle(), scheduleRequestDto.getContent());
 
         return new ScheduleResponseDto(schedule,
             user.getUsername());

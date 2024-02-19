@@ -63,9 +63,14 @@ public class Schedule {
     }
 
 
-    public void update(ScheduleRequestDto scheduleRequestDto) {
-        this.title = scheduleRequestDto.getTitle();
-        this.content = scheduleRequestDto.getContent();
+//    public void update(ScheduleRequestDto scheduleRequestDto) {
+//        this.title = scheduleRequestDto.getTitle();
+//        this.content = scheduleRequestDto.getContent();
+//    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
     public void complete() {

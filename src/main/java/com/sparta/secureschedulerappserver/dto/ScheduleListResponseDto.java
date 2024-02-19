@@ -15,7 +15,7 @@ public class ScheduleListResponseDto {
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> entry.getValue().stream()
-                    .map(scheduleResponseDto -> new ScheduleResponseDto(scheduleResponseDto))
+                    .map(ScheduleResponseDto::new)
                     .collect(Collectors.toList())
             ));
     }
