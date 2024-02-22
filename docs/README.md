@@ -100,28 +100,20 @@ https://teamsparta.notion.site/1ffcb79d0cfc41c6a86a2b2bd8c68aa2?v=763dbd31df384d
   - [x] AccessToken, RefreshToken에 대해 구글링해 보고 RefreshToken을 적용해 보세요!
   - [ ] 프로젝트에 swagger 를 구글링해 보고 적용해 보세요!
     - swagger란? Open Api Specification(OAS)를 위한 프레임워크 입니다. API들이 가지고 있는 스펙(spec)을 명세, 관리할 수 있으며, 백엔드와 프론트엔드가 협업할 때 사용할 수 있습니다!
-  
 
-<aside>
-❓ **Why: 과제 제출시에는 아래 질문을 고민해보고 답변을 함께 제출해주세요.**
 
-</aside>
-
-1. [x] 처음 설계한 API 명세서에 변경사항이 있었나요? 
-   - 변경 되었다면 어떤 점 때문 일까요? 첫 설계의 중요성에 대해 작성해 주세요!
-     - 추가사항을 고려하지 않고 설계를 함, 추가로 Entity와의 관계에서 생각과는 다른 부분이 존재했음
-2. [x] ERD를 먼저 설계한 후 Entity를 개발했을 때 어떤 점이 도움이 되셨나요?
-   - Entity 패키지 내 클래스 생성이 매우 편했음
-3. [x] JWT를 사용하여 인증/인가를 구현 했을 때의 장점은 무엇일까요?
-    - 로그인 기능을 사용할 수 있으며 검증이 가능하다.
-    - 세션 방식과 비교하면 추가 데이터 저장소가 필요없다.
-4. [x] 반대로 JWT를 사용한 인증/인가의 한계점은 무엇일까요?
-    - 인증 인가에 필요한 jwt 토큰의 길이가 길어지면 세션방식보다 리소스 사용량이 증가할 수 있다.
-    - 토큰을 만료시킬 수 있는 방법이 없다.
-    - 리프레시 토큰을 데이터 저장소에 저장 할 경우 세션방식과 다를게 없어 장점을 잃는다.
-5. [x] 만약 댓글이 여러개 달려있는 할일을 삭제하려고 한다면 무슨 문제가 발생할까요? Database 테이블 관점에서 해결방법이 무엇일까요?
-    - 남아있는 댓글이 참조할 할일이 없어 오류가 발생된다. 연결되어있는 내용을 모두 삭제하도록 CASCADE 설정을 해야한다.
-6. [x] IoC / DI 에 대해 간략하게 설명해 주세요!
-    - IoC : (제어의 역전)  controller - service - repository 순으로 이루어지던 접근 순서를 DI를 통해 repository - service - controller 순으로 변경한다. 
-    - DI : (의존성 주입) : 제어의 역전의 주요 핵심이며 여러개의 controller가 생성되면 여러개의 service, repository를 생성해야 한다.
-      따라서 미리 repository, service를 하나씩 만들어 필요한 controller에 주입하여 객체를 공유한다.
+- [x]  **🆕 DTO, Entity Test 추가하기**
+    - [x] `@Test` 를 사용해서 DTO 와 Entity Test 를 추가합니다.
+    - [x] User, Todo, Comment, DTO 에 존재하는 메서드들에 대해서 테스트를 추가합니다.
+- △  **🆕 Controller Test 추가하기**
+    - [x] `@WebMvcTest` 를 사용하여 Controller Test 를 추가합니다.
+    -  △ Todo, Comment Controller 에 대해서 테스트를 추가합니다.(성능에 문제)
+- [x]  **🆕 Service Test 추가하기**
+    - [x] `@ExtendWith` 를 사용하여 Service Test 를 추가합니다.
+    - [x] User, UserDetails, Todo, Comment Service 에 대해서 테스트를 추가합니다.
+- △  **🆕 Repository Test 추가하기**
+    - [x] `@DataJpaTest` 를 사용하여 Repository Test 를 추가합니다.
+    -  △ User, Schedule, Comment Repository 에 대해서 테스트를 추가합니다.(Schedule만 구현)
+- △  **🆕 통합 Test 추가하기**
+    - [x] `@SpringBootTest` 를 사용하여 통합 Test 를 추가합니다.
+    -  △ User, Schedule, Comment 에 대해서 테스트를 추가합니다.(Schedule만 구현)

@@ -35,6 +35,9 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    runtimeOnly 'com.h2database:h2'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.10.0'
+
 }
 
 tasks.named('test') {
