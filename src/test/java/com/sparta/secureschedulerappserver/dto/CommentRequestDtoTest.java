@@ -16,18 +16,6 @@ class CommentRequestDtoTest {
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
-    static class CommentRequestDto {
-        @NotBlank(message = "Comment cannot be blank")
-        private final String comment;
-
-        public CommentRequestDto(String comment) {
-            this.comment = comment;
-        }
-
-        public String getComment() {
-            return comment;
-        }
-    }
 
     @Test
     @DisplayName("댓글에 공백을 넣어 validation 확인")
@@ -43,7 +31,7 @@ class CommentRequestDtoTest {
         assertFalse(violations.isEmpty()); // 위반 사항이 발견되었는지 확인
         assertEquals(1, violations.size()); // 발견된 위반 사항이 하나인지 확인
         ConstraintViolation<CommentRequestDto> violation = violations.iterator().next();
-        assertEquals("Comment cannot be blank", violation.getMessage()); // 올바른 메시지가 출력되었는지 확인
+        assertEquals("공백일 수 없습니다", violation.getMessage()); // 올바른 메시지가 출력되었는지 확인
     }
 
     @Test

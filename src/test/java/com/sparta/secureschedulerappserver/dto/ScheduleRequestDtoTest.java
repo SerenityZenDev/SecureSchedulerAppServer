@@ -16,25 +16,6 @@ class ScheduleRequestDtoTest {
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
-    static class ScheduleRequestDto {
-        @NotBlank(message = "Title cannot be blank")
-        private String title;
-        @NotBlank(message = "Content cannot be blank")
-        private String content;
-
-        public ScheduleRequestDto(String title, String content) {
-            this.title = title;
-            this.content = content;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getContent() {
-            return content;
-        }
-    }
 
     @Test
     @DisplayName("제목, 내용에 공백을 넣어 @NotBlank검증")
@@ -49,7 +30,8 @@ class ScheduleRequestDtoTest {
         assertFalse(violations.isEmpty());
         assertEquals(2, violations.size());
         for (ConstraintViolation<ScheduleRequestDto> violation : violations) {
-            assertTrue(violation.getMessage().contains("cannot be blank"));
+            System.out.println(violation.getMessage());
+            assertTrue(violation.getMessage().contains("공백일 수 없습니다"));
         }
     }
 
