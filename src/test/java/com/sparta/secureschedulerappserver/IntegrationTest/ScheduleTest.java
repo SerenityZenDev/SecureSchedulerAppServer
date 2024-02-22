@@ -1,4 +1,4 @@
-package com.sparta.secureschedulerappserver.IntegreationTest;
+package com.sparta.secureschedulerappserver.IntegrationTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // 서버의 PORT 를 랜덤으로 설정합니다.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS) // 테스트 인스턴스의 생성 단위를 클래스로 변경합니다.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ServiceTest {
+class ScheduleTest {
 
     @Autowired
     UserRepository userRepository;
@@ -29,6 +29,7 @@ class ServiceTest {
     ScheduleService scheduleService;
 
     User user;
+
 
     ScheduleResponseDto createSchedule = null;
 
@@ -87,5 +88,6 @@ class ServiceTest {
         assertEquals(responseDto.getContent(), "수정된 내용");
 
     }
+
 
 }
