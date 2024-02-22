@@ -116,4 +116,4 @@ https://teamsparta.notion.site/1ffcb79d0cfc41c6a86a2b2bd8c68aa2?v=763dbd31df384d
     -  △ User, Schedule, Comment Repository 에 대해서 테스트를 추가합니다.(Schedule만 구현)
 - △  **🆕 통합 Test 추가하기**
     - [x] `@SpringBootTest` 를 사용하여 통합 Test 를 추가합니다.
-    -  △ User, Schedule, Comment 에 대해서 테스트를 추가합니다.(Schedule만 구현)
+    -  △ User, Schedule, Comment 에 대해서 테스트를 추가합니다.(Schedule, Comment 구현)
