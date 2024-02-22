@@ -109,6 +109,8 @@ public class ScheduleService {
         return new ScheduleListResponseDto(scheduleByName);
     }
 
+
+
     public List<ScheduleResponseDto> findSchedules(String text) {
         List<Schedule> schedules = scheduleRepository.findAllByTitleContainingAndHiddenFalse(text);
         List<ScheduleResponseDto> scheduleResponseDtos = new ArrayList<>();

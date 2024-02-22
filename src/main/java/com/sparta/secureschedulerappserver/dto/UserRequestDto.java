@@ -4,8 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserRequestDto {
 
     @NotBlank
@@ -17,4 +19,9 @@ public class UserRequestDto {
     @Pattern(regexp = "^[a-z0-9]+$", message = "알파벳 소문자, 숫자로만 구성되어야 합니다.")
     @NotBlank
     private String password;
+
+    public UserRequestDto(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }

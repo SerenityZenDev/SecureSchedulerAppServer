@@ -1,6 +1,5 @@
 package com.sparta.secureschedulerappserver.entity;
 
-import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
