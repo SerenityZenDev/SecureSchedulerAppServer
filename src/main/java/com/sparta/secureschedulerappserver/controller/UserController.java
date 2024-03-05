@@ -2,7 +2,7 @@ package com.sparta.secureschedulerappserver.controller;
 
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.dto.UserResponseDto;
-import com.sparta.secureschedulerappserver.service.UserService;
+import com.sparta.secureschedulerappserver.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @PostMapping("/join")
     public ResponseEntity<UserResponseDto> join(@Valid @RequestBody UserRequestDto userRequestDto) {
