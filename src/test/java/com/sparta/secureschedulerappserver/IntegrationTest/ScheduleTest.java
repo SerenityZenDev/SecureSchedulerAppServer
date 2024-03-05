@@ -7,7 +7,7 @@ import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
 import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.repository.UserRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
-import com.sparta.secureschedulerappserver.service.ScheduleService;
+import com.sparta.secureschedulerappserver.service.ScheduleServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -26,7 +26,7 @@ class ScheduleTest {
     UserRepository userRepository;
 
     @Autowired
-    ScheduleService scheduleService;
+    ScheduleServiceImpl scheduleService;
 
     User user;
 

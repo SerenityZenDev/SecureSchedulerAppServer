@@ -4,7 +4,7 @@ import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
-import com.sparta.secureschedulerappserver.service.ScheduleService;
+import com.sparta.secureschedulerappserver.service.ScheduleServiceImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ScheduleController {
 
-    private final ScheduleService scheduleService;
+    private final ScheduleServiceImpl scheduleService;
 
     @PostMapping("")
     public ScheduleResponseDto createSchedule(

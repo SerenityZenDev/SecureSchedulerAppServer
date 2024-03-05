@@ -47,7 +47,7 @@ class ScheduleServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private ScheduleService scheduleService;
+    private ScheduleServiceImpl scheduleService;
 
     @Nested
     @DisplayName("일정 생성 관련 테스트")

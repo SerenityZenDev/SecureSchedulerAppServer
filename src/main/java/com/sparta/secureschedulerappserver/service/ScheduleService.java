@@ -3,178 +3,85 @@ package com.sparta.secureschedulerappserver.service;
 import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
-import com.sparta.secureschedulerappserver.entity.Schedule;
-import com.sparta.secureschedulerappserver.entity.User;
-import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
-import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
-import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationException;
-import com.sparta.secureschedulerappserver.repository.ScheduleRepository;
-import com.sparta.secureschedulerappserver.repository.UserRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@RequiredArgsConstructor
-public class ScheduleService {
+public interface ScheduleService {
 
-    private final ScheduleRepository scheduleRepository;
-    private final UserRepository userRepository;
+    /**
+     * 게시글 생성
+     *
+     * @param scheduleRequestDto 게시글 생성 요청정보
+     * @param userDetails        게시글 생성 요청자
+     * @return 게시글 생성 결과
+     */
+    ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto,
+        UserDetailsImpl userDetails);
 
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto,
-        UserDetailsImpl userDetails) {
-        String title = scheduleRequestDto.getTitle();
-        String content = scheduleRequestDto.getContent();
-        String username = userDetails.getUsername();
+    /**
+     * 게시글 단건 조회
+     *
+     * @param scheduleId 게시글 조회 ID
+     * @return 게시글 단건 정보
+     */
+    ScheduleResponseDto readSchedule(Long scheduleId);
 
-        User user = userRepository.findByUsername(username).orElseThrow(
-            NotFoundUserException::new
-        );
+    /**
+     * 게시글 전체 조회
+     *
+     * @return 게시글 전체 정보
+     */
+    ScheduleListResponseDto readSchedules();
 
-        Schedule schedule = new Schedule(title, content, user);
+    /**
+     * 본인 게시글 조회
+     *
+     * @param userDetails 게시글 조회 요청자
+     * @return 게시글 조회 결과
+     */
+    ScheduleListResponseDto readMySchedules(UserDetailsImpl userDetails);
 
-        scheduleRepository.save(schedule);
+    /**
+     * 미완료 게시글 전체 조회
+     *
+     * @return 미완료 게시글 전체 조회 결과
+     */
+    ScheduleListResponseDto readUncompleteSchedules();
 
-        return new ScheduleResponseDto(schedule, username);
-    }
+    /**
+     * 특정 문자 포함 게시글 조회
+     *
+     * @param text 게시글 포함 키워드
+     * @return 게시글 찾기 결과
+     */
+    List<ScheduleResponseDto> findSchedules(String text);
 
-    public ScheduleResponseDto readSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            NotFoundScheduleException::new
-        );
-        return new ScheduleResponseDto(schedule);
-    }
+    /**
+     * 게시글 수정
+     *
+     * @param scheduleId         수정할 게시글 ID
+     * @param scheduleRequestDto 수정할 게시글 내용
+     * @param userDetails        게시글 수정 요청자
+     * @return 게시글 수정 결과
+     */
+    ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleRequestDto scheduleRequestDto,
+        UserDetailsImpl userDetails);
 
-    public ScheduleListResponseDto readSchedules() {
-        List<User> users = userRepository.findAll();
-        Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
+    /**
+     * 게시글 완료
+     *
+     * @param scheduleId  완료 처리할 게시글 ID
+     * @param userDetails 게시글 완료 요청자
+     * @return 게시글 완료처리 결과
+     */
+    ScheduleResponseDto completeSchedule(Long scheduleId, UserDetailsImpl userDetails);
 
-        for (User user : users) {
-            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndHiddenFalse(
-                user.getUserId());
-            if (schedules.isEmpty()) {
-                continue;
-            }
-
-            List<ScheduleResponseDto> scheduleResponseDtos = schedules.stream()
-                .map(ScheduleResponseDto::new)
-                .collect(Collectors.toList());
-
-            scheduleByName.put(user.getUsername(), scheduleResponseDtos);
-        }
-
-        return new ScheduleListResponseDto(scheduleByName);
-    }
-
-    public ScheduleListResponseDto readMySchedules(UserDetailsImpl userDetails) {
-        Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
-            NotFoundUserException::new
-        );
-
-        List<Schedule> schedules = scheduleRepository.findByUser_UserId(user.getUserId());
-
-        List<ScheduleResponseDto> scheduleResponseDtos = schedules.stream()
-            .map(ScheduleResponseDto::new)
-            .collect(Collectors.toList());
-
-        scheduleByName.put(user.getUsername(), scheduleResponseDtos);
-        return new ScheduleListResponseDto(scheduleByName);
-    }
-
-    public ScheduleListResponseDto readUncompleteSchedules() {
-        List<User> users = userRepository.findAll();
-        Map<String, List<ScheduleResponseDto>> scheduleByName = new HashMap<>();
-
-        for (User user : users) {
-            List<Schedule> schedules = scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(
-                user.getUserId());
-            if (schedules.isEmpty()) {
-                continue;
-            }
-
-            List<ScheduleResponseDto> scheduleResponseDtos = schedules.stream()
-                .map(ScheduleResponseDto::new)
-                .collect(Collectors.toList());
-
-            scheduleByName.put(user.getUsername(), scheduleResponseDtos);
-        }
-
-        return new ScheduleListResponseDto(scheduleByName);
-    }
-
-
-
-    public List<ScheduleResponseDto> findSchedules(String text) {
-        List<Schedule> schedules = scheduleRepository.findAllByTitleContainingAndHiddenFalse(text);
-        List<ScheduleResponseDto> scheduleResponseDtos = new ArrayList<>();
-
-        for (Schedule schedule : schedules) {
-            scheduleResponseDtos.add(new ScheduleResponseDto(schedule));
-        }
-
-        return scheduleResponseDtos;
-    }
-
-    @Transactional
-    public ScheduleResponseDto updateSchedule(Long scheduleId,
-        ScheduleRequestDto scheduleRequestDto, UserDetailsImpl userDetails) {
-
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
-            NotFoundUserException::new
-        );
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            NotFoundScheduleException::new
-        );
-        if (!user.getUsername().equals(schedule.getUser().getUsername())) {
-            throw new UnauthorizedOperationException();
-        }
-
-        schedule.update(scheduleRequestDto.getTitle(), scheduleRequestDto.getContent());
-
-        return new ScheduleResponseDto(schedule,
-            user.getUsername());
-    }
-
-    @Transactional
-    public ScheduleResponseDto completeSchedule(Long scheduleId, UserDetailsImpl userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
-            NotFoundUserException::new
-        );
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            NotFoundScheduleException::new
-        );
-        if (!user.getUsername().equals(schedule.getUser().getUsername())) {
-            throw new UnauthorizedOperationException();
-        }
-
-        schedule.complete();
-
-        return new ScheduleResponseDto(schedule, user.getUsername());
-    }
-
-    @Transactional
-    public ScheduleResponseDto hideSchedule(Long scheduleId, UserDetailsImpl userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
-            NotFoundUserException::new
-        );
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            NotFoundScheduleException::new
-        );
-        if (!user.getUsername().equals(schedule.getUser().getUsername())) {
-            throw new UnauthorizedOperationException();
-        }
-
-        schedule.optionHidden();
-
-        return new ScheduleResponseDto(schedule, user.getUsername());
-    }
-
-
+    /**
+     * 게시글 숨기기
+     *
+     * @param scheduleId  숨길 게시글 ID
+     * @param userDetails 게시글 숨기기 요청자
+     * @return 게시글 숨기기 결과
+     */
+    ScheduleResponseDto hideSchedule(Long scheduleId, UserDetailsImpl userDetails);
 }
