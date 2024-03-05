@@ -28,9 +28,9 @@ import com.sparta.secureschedulerappserver.entity.Comment;
 import com.sparta.secureschedulerappserver.entity.Schedule;
 import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
-import com.sparta.secureschedulerappserver.service.CommentService;
-import com.sparta.secureschedulerappserver.service.ScheduleService;
-import com.sparta.secureschedulerappserver.service.UserService;
+import com.sparta.secureschedulerappserver.service.CommentServiceImpl;
+import com.sparta.secureschedulerappserver.service.ScheduleServiceImpl;
+import com.sparta.secureschedulerappserver.service.UserServiceImpl;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,13 +75,13 @@ public class ControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    CommentService commentService;
+    CommentServiceImpl commentService;
 
     @MockBean
-    ScheduleService scheduleService;
+    ScheduleServiceImpl scheduleService;
 
     @MockBean
-    UserService userService;
+    UserServiceImpl userService;
 
     @BeforeEach
     public void setup() {
