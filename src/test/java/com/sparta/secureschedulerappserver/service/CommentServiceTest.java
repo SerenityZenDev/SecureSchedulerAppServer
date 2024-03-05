@@ -38,7 +38,7 @@ class CommentServiceTest {
     private ScheduleRepository scheduleRepository;
 
     @InjectMocks
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
 
     @Nested
     @DisplayName("댓글 생성 관련 테스트")

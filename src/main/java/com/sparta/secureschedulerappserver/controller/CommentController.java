@@ -4,7 +4,7 @@ import com.sparta.secureschedulerappserver.dto.CommentDeleteDto;
 import com.sparta.secureschedulerappserver.dto.CommentRequestDto;
 import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
-import com.sparta.secureschedulerappserver.service.CommentService;
+import com.sparta.secureschedulerappserver.service.CommentServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,13 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentService commentService;
+    private final CommentServiceImpl commentService;
 
     @PostMapping("")
     public CommentResponseDto createComment(
         @PathVariable Long scheduleId,
         @Valid @RequestBody CommentRequestDto commentRequestDto,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         return commentService.createComment(scheduleId,
             commentRequestDto, userDetails);
     }
@@ -38,7 +39,8 @@ public class CommentController {
     public CommentResponseDto updateComment(
         @PathVariable Long commentId,
         @Valid @RequestBody CommentRequestDto commentRequestDto,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         return commentService.updateComment(commentId,
             commentRequestDto, userDetails);
     }
@@ -46,7 +48,8 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<CommentDeleteDto> deleteComment(
         @PathVariable Long commentId,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         commentService.deleteComment(commentId, userDetails);
         String successMessage = "삭제가 정상적으로 처리되었습니다.";
         return ResponseEntity.ok().body(new CommentDeleteDto(successMessage, HttpStatus.OK));

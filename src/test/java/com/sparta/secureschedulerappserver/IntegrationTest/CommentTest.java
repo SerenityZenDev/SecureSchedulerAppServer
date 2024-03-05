@@ -11,8 +11,7 @@ import com.sparta.secureschedulerappserver.repository.CommentRepository;
 import com.sparta.secureschedulerappserver.repository.ScheduleRepository;
 import com.sparta.secureschedulerappserver.repository.UserRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
-import com.sparta.secureschedulerappserver.service.CommentService;
-import com.sparta.secureschedulerappserver.service.ScheduleService;
+import com.sparta.secureschedulerappserver.service.CommentServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -37,7 +36,7 @@ public class CommentTest {
     CommentRepository commentRepository;
 
     @Autowired
-    CommentService commentService;
+    CommentServiceImpl commentService;
 
     User user;
 

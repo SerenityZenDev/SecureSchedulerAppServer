@@ -2,64 +2,37 @@ package com.sparta.secureschedulerappserver.service;
 
 import com.sparta.secureschedulerappserver.dto.CommentRequestDto;
 import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
-import com.sparta.secureschedulerappserver.entity.Comment;
-import com.sparta.secureschedulerappserver.entity.Schedule;
-import com.sparta.secureschedulerappserver.exception.NotFoundCommentException;
-import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
-import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationException;
-import com.sparta.secureschedulerappserver.repository.CommentRepository;
-import com.sparta.secureschedulerappserver.repository.ScheduleRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@RequiredArgsConstructor
-public class CommentService {
+public interface CommentService {
 
-    private final CommentRepository commentRepository;
-    private final ScheduleRepository scheduleRepository;
+    /**
+     * 댓글 생성
+     *
+     * @param scheduleId        댓글을 생성할 게시글 ID
+     * @param commentRequestDto 댓글 생성 내용
+     * @param userDetails       댓글 생성자 구분
+     * @return 게시글 생성 결과
+     */
+    CommentResponseDto createComment(Long scheduleId, CommentRequestDto commentRequestDto,
+        UserDetailsImpl userDetails);
 
+    /**
+     * 댓글 수성
+     *
+     * @param commentId         수정할 댓글 ID
+     * @param commentRequestDto 수정할 댓글 내용
+     * @param userDetails       댓글 수정자 구분
+     * @return 게시글 수정 결과
+     */
+    CommentResponseDto updateComment(Long commentId, CommentRequestDto commentRequestDto,
+        UserDetailsImpl userDetails);
 
-    public CommentResponseDto createComment(Long scheduleId, CommentRequestDto commentRequestDto,
-        UserDetailsImpl userDetails) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-            NotFoundScheduleException::new
-        );
-        Comment comment = new Comment(commentRequestDto.getComment(), schedule, userDetails.getUser());
-        commentRepository.save(comment);
-
-        return new CommentResponseDto(comment);
-    }
-
-    @Transactional
-    public CommentResponseDto updateComment(Long commentId, CommentRequestDto commentRequestDto,
-        UserDetailsImpl userDetails) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-            NotFoundCommentException::new
-        );
-
-        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())) {
-            throw new UnauthorizedOperationException();
-        }
-
-        comment.update(commentRequestDto.getComment());
-
-        return new CommentResponseDto(comment);
-    }
-
-    public void deleteComment(Long commentId, UserDetailsImpl userDetails) {
-
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-            NotFoundCommentException::new
-        );
-
-        if (!(comment.getUser().getUserId() == userDetails.getUser().getUserId())) {
-            throw new UnauthorizedOperationException();
-        }
-
-        commentRepository.delete(comment);
-
-    }
+    /**
+     * 댓글 삭제
+     *
+     * @param commentId   삭제할 댓글 ID
+     * @param userDetails 댓글 삭제자 구분
+     */
+    void deleteComment(Long commentId, UserDetailsImpl userDetails);
 }
