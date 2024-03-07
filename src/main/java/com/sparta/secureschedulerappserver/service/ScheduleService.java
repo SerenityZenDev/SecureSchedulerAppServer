@@ -84,4 +84,12 @@ public interface ScheduleService {
      * @return 게시글 숨기기 결과
      */
     ScheduleResponseDto hideSchedule(Long scheduleId, UserDetailsImpl userDetails);
+
+    /**
+     * QueryDSL을 통한 제목 키워드 게시글 조회
+     *
+     * @param keyword   제목에서 검색할 내용
+     * @return 게시물 조회 결과
+     */
+    List<ScheduleResponseDto> showSchedules(String keyword);
 }

@@ -57,7 +57,7 @@ public class ScheduleController {
 
     @GetMapping("/search")
     public List<ScheduleResponseDto> findSchedule(@RequestParam String text) {
-        return scheduleService.findSchedules(text);
+        return scheduleService.showSchedules(text);
     }
 
     @PatchMapping("/{scheduleId}")

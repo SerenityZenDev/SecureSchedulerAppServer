@@ -127,6 +127,14 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResponseDto(schedule, user.getUsername());
     }
 
+    @Override
+    public List<ScheduleResponseDto> showSchedules(String keyword) {
+        return scheduleRepository.searchByTitle(keyword)
+            .stream()
+            .map(ScheduleResponseDto::new)
+            .collect(Collectors.toList());
+    }
+
     private User findUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(NotFoundUserException::new);
     }
