@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>,
-    QuerydslPredicateExecutor<Schedule>,ScheduleRepositoryQuery {
+    ScheduleRepositoryQuery {
 
     List<Schedule> findByUser_UserId(Long userId);
 

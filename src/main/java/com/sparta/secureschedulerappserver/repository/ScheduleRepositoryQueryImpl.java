@@ -5,7 +5,6 @@ import static com.sparta.secureschedulerappserver.entity.QSchedule.schedule;
 import static com.sparta.secureschedulerappserver.entity.QUser.user;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.secureschedulerappserver.entity.QSchedule;
 import com.sparta.secureschedulerappserver.entity.Schedule;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
