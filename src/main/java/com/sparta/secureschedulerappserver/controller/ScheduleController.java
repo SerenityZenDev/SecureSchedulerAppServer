@@ -1,5 +1,6 @@
 package com.sparta.secureschedulerappserver.controller;
 
+import com.sparta.secureschedulerappserver.dto.PageDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
@@ -8,6 +9,7 @@ import com.sparta.secureschedulerappserver.service.ScheduleServiceImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,7 +48,8 @@ public class ScheduleController {
     @GetMapping("/mySchedules")
     public List<ScheduleResponseDto> readMySchedules(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return scheduleService.getSchedulesForUser(userDetails);
+        PageDto pageDto = PageDto.builder().currentPage(1).size(100).build();
+        return scheduleService.getSchedulesForUser(userDetails, pageDto);
     }
 
 
@@ -57,7 +60,9 @@ public class ScheduleController {
 
     @GetMapping("/search")
     public List<ScheduleResponseDto> findSchedule(@RequestParam String text) {
-        return scheduleService.showSchedules(text);
+        // 추후 입력을 받거나 하도록 수정
+        PageDto pageDto = PageDto.builder().currentPage(1).size(100).build();
+        return scheduleService.showSchedules(text, pageDto);
     }
 
 

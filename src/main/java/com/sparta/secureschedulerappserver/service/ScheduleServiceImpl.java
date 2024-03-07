@@ -1,5 +1,6 @@
 package com.sparta.secureschedulerappserver.service;
 
+import com.sparta.secureschedulerappserver.dto.PageDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,24 +131,26 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDto> showSchedules(String keyword) {
-        return scheduleRepository.searchByTitle(keyword)
+    public List<ScheduleResponseDto> showSchedules(String keyword, PageDto pageDto) {
+        return scheduleRepository.searchByTitle(keyword, pageDto.toPageable())
             .stream()
             .map(ScheduleResponseDto::new)
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<ScheduleResponseDto> getSchedulesForUser(UserDetailsImpl userDetails) {
+    public List<ScheduleResponseDto> getSchedulesForUser(UserDetailsImpl userDetails, PageDto pageDto) {
         User user = userRepository.findById(userDetails.getUser().getUserId()).orElseThrow(
             NotFoundUserException::new
         );
 
-        return scheduleRepository.getSchedulesForUser(user.getUserId())
-            .stream()
+        Page<Schedule> schedulesPage = scheduleRepository.getSchedulesForUser(user.getUserId(), pageDto.toPageable());
+
+        return schedulesPage.getContent().stream()
             .map(ScheduleResponseDto::new)
             .collect(Collectors.toList());
     }
+
 
     private User findUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(NotFoundUserException::new);

@@ -1,5 +1,6 @@
 package com.sparta.secureschedulerappserver.service;
 
+import com.sparta.secureschedulerappserver.dto.PageDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
@@ -92,12 +93,13 @@ public interface ScheduleService {
      * @param keyword   제목에서 검색할 내용
      * @return 게시물 조회 결과
      */
-    List<ScheduleResponseDto> showSchedules(String keyword);
+    List<ScheduleResponseDto> showSchedules(String keyword, PageDto pageDto);
 
     /**
      * QueryDSL + LAZY를 통한 자신이 작성한 게시글 조회
      *
      * @param userDetails 본인 검증 정보
      */
-    List<ScheduleResponseDto> getSchedulesForUser(UserDetailsImpl userDetails);
+
+    List<ScheduleResponseDto> getSchedulesForUser(UserDetailsImpl userDetails, PageDto pageDto);
 }
