@@ -135,6 +135,18 @@ public class ScheduleServiceImpl implements ScheduleService {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ScheduleResponseDto> getSchedulesForUser(UserDetailsImpl userDetails) {
+        User user = userRepository.findById(userDetails.getUser().getUserId()).orElseThrow(
+            NotFoundUserException::new
+        );
+
+        return scheduleRepository.getSchedulesForUser(user.getUserId())
+            .stream()
+            .map(ScheduleResponseDto::new)
+            .collect(Collectors.toList());
+    }
+
     private User findUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(NotFoundUserException::new);
     }

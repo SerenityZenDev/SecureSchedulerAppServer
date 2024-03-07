@@ -44,9 +44,9 @@ public class ScheduleController {
     }
 
     @GetMapping("/mySchedules")
-    public ScheduleListResponseDto readMySchedules(
+    public List<ScheduleResponseDto> readMySchedules(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return scheduleService.readMySchedules(userDetails);
+        return scheduleService.getSchedulesForUser(userDetails);
     }
 
 
@@ -59,6 +59,7 @@ public class ScheduleController {
     public List<ScheduleResponseDto> findSchedule(@RequestParam String text) {
         return scheduleService.showSchedules(text);
     }
+
 
     @PatchMapping("/{scheduleId}")
     public ScheduleResponseDto updateSchedule(@PathVariable Long scheduleId,
