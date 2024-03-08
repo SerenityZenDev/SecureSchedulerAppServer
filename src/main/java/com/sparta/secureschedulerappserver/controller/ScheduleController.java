@@ -48,7 +48,7 @@ public class ScheduleController {
     @GetMapping("/mySchedules")
     public List<ScheduleResponseDto> readMySchedules(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        PageDto pageDto = PageDto.builder().currentPage(1).size(100).build();
+        PageDto pageDto = PageDto.builder().currentPage(1).size(1).build();
         return scheduleService.getSchedulesForUser(userDetails, pageDto);
     }
 

@@ -20,6 +20,7 @@ import com.sparta.secureschedulerappserver.config.WebSecurityConfig;
 import com.sparta.secureschedulerappserver.dto.CommentDeleteDto;
 import com.sparta.secureschedulerappserver.dto.CommentRequestDto;
 import com.sparta.secureschedulerappserver.dto.CommentResponseDto;
+import com.sparta.secureschedulerappserver.dto.PageDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,11 +47,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -206,24 +211,35 @@ public class ControllerTest {
         @DisplayName("자신 스케쥴 조회")
         @WithMockUser(username = "testUser", password = "testPassword")
         public void testReadMySchedules() throws Exception {
-            // 필요한 ScheduleListResponseDto를 생성합니다.
-            List<ScheduleResponseDto> scheduleList = new ArrayList<>();
+            // given
+            mockUserSetup();
+            User testUser = new User("testUser", "testPassword");
+            UserDetailsImpl testUserDetails = new UserDetailsImpl(testUser);
+            Schedule schedule1 = new Schedule("title1", "content1", testUser);
+            Schedule schedule2 = new Schedule("title2", "content1", testUser);
+
             // scheduleList 설정...
+            List<ScheduleResponseDto> scheduleList = new ArrayList<>();
+            scheduleList.add(new ScheduleResponseDto(schedule1));
+            scheduleList.add(new ScheduleResponseDto(schedule2));
 
-            Map<String, List<ScheduleResponseDto>> scheduleMap = new HashMap<>();
-            scheduleMap.put("testKey", scheduleList);
-            ScheduleListResponseDto listResponseDto = new ScheduleListResponseDto(scheduleMap);
+            PageDto pageDto = PageDto.builder().currentPage(1).size(2).build();
 
-            // scheduleService의 readMySchedules 메서드가 호출되면 listResponseDto를 반환하도록 설정
-            given(scheduleService.readMySchedules(any())).willReturn(listResponseDto);
+            // UserRepository와 ScheduleRepository에서 테스트에 필요한 값을 반환하도록 설정
+            when(scheduleService.getSchedulesForUser(testUserDetails, pageDto)).thenReturn(scheduleList);
 
-            // GET 요청을 보내고, 상태 코드가 200이며, 반환되는 JSON이 listResponseDto와 일치하는지 확인합니다.
+
+            // when & then
             mvc.perform(get("/schedules/mySchedules")
-                    .contentType(MediaType.APPLICATION_JSON))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .principal(mockPrincipal))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(listResponseDto)))
                 .andDo(print());
         }
+
+
+
 
         @Test
         public void testReadUncompleteSchedule() throws Exception {

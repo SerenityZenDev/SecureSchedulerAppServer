@@ -29,9 +29,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateDuplicateUsername(String username) {
-        userRepository.findByUsername(username).orElseThrow(
-            DuplicateUsernameException::new
-        );
+        userRepository.findByUsername(username).ifPresent(
+            user -> {throw new DuplicateUsernameException();
+            });
     }
 }
 
