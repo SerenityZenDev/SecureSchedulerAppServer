@@ -4,6 +4,7 @@ import com.sparta.secureschedulerappserver.exception.DuplicateUsernameException;
 import com.sparta.secureschedulerappserver.exception.NotFoundCommentException;
 import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
 import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
+import com.sparta.secureschedulerappserver.exception.PasswordMismatchException;
 import com.sparta.secureschedulerappserver.exception.UnauthorizedOperationException;
 import com.sparta.secureschedulerappserver.exception.dto.ExceptionDto;
 import java.util.stream.Collectors;
@@ -58,5 +59,11 @@ public class ScheduleErrorController {
         DuplicateUsernameException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(new ExceptionDto(e.getMessage(), HttpStatus.CONFLICT));
+    }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ExceptionDto> passwordMismatchException(PasswordMismatchException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(new ExceptionDto(e.getMessage(), HttpStatus.UNAUTHORIZED));
     }
 }
