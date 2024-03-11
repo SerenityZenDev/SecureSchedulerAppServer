@@ -16,18 +16,7 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        String jwt = "JWT"; // JWT 변수 생성
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
-        Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
-            .name(jwt)
-            .type(SecurityScheme.Type.HTTP)
-            .scheme("bearer")
-            .bearerFormat("JWT")
-        );
-        return new OpenAPI()
-            .components(components) // 기존 components 변수 사용
-            .info(apiInfo())
-            .addSecurityItem(securityRequirement);
+        return new OpenAPI().info(apiInfo());
     }
 
     private Info apiInfo() {
