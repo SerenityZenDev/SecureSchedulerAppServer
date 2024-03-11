@@ -70,7 +70,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
                 return;
             }
-        } else if (req.getRequestURI().startsWith("/user/")) {
+        } else if (
+            req.getRequestURI().startsWith("/user/") ||
+                req.getRequestURI().startsWith("/swagger-ui/") ||
+                req.getRequestURI().startsWith("/v3/") ||
+                req.getRequestURI().startsWith("/swagger-resources/") ||
+                req.getRequestURI().startsWith("/webjars/") ||
+                req.getRequestURI().startsWith("/favicon.ico")
+        ) {
             filterChain.doFilter(req, res);
             return;
         } else {

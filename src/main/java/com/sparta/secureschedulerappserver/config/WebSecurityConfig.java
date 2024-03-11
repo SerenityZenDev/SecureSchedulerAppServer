@@ -60,10 +60,9 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .permitAll() // resources 접근 허용 설정
-                .requestMatchers("/user/**").permitAll() // '/user/'로 시작하는 요청 모두 접근 허가
-                .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                .requestMatchers("/swagger-ui/**", "/v3/**", "/swagger-resources/**", "/webjars/**", "/favicon.ico").permitAll()
+                .requestMatchers("/user/**").permitAll()
+                .anyRequest().authenticated()
         );
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);

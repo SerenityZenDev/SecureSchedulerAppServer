@@ -49,6 +49,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jacoco/org.jacoco.agent
     testImplementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.11'
 
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
+
+
+
 
 }
 
