@@ -28,6 +28,8 @@ import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.entity.Comment;
 import com.sparta.secureschedulerappserver.entity.Schedule;
 import com.sparta.secureschedulerappserver.entity.User;
+import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
+import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import com.sparta.secureschedulerappserver.service.CommentServiceImpl;
 import com.sparta.secureschedulerappserver.service.ScheduleServiceImpl;
@@ -53,6 +55,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -68,6 +71,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
         )
     }
 )
+@ActiveProfiles("test")
 public class ControllerTest {
     private MockMvc mvc;
 
@@ -78,6 +82,12 @@ public class ControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private JwtTokenError jwtTokenError;
 
     @MockBean
     CommentServiceImpl commentService;

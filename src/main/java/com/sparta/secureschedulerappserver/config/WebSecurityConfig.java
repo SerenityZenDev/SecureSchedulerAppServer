@@ -24,7 +24,6 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final JwtTokenError jwtTokenError;
     private final UserDetailsServiceImpl userDetailsService;
-    private final AuthenticationConfiguration authenticationConfiguration;
 
 
     @Bean // Spring Security의 인증 매니저 생성 설정
