@@ -54,12 +54,14 @@ public class JwtUtil {
 
     // 1. JWT 생성
     // 토큰 생성
-    public String createAccessToken(String username) {
+    public String createAccessToken(Long userId ,String username) {
         Date date = new Date();
 
         return BEARER_PREFIX +
             Jwts.builder()
-                .setSubject(username) // 사용자 식별자값(ID)
+                .setSubject(String.valueOf(userId)) // 사용자 식별자값(ID)
+                .claim("userId", userId)
+                .claim("username", username)
                 .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME)) // 만료 시간
                 .setIssuedAt(date) // 발급일
                 .signWith(key, signatureAlgorithm) // 암호화 알고리즘

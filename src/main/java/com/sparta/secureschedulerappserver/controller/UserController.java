@@ -2,6 +2,7 @@ package com.sparta.secureschedulerappserver.controller;
 
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.dto.UserResponseDto;
+import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.exception.PasswordMismatchException;
 import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
@@ -27,7 +28,6 @@ public class UserController {
 
     private final UserServiceImpl userService;
     private final JwtUtil jwtUtil;
-    private final JwtTokenError jwtTokenError;
 
     @PostMapping("/join")
     public ResponseEntity<UserResponseDto> join(@Valid @RequestBody UserRequestDto userRequestDto) {
@@ -44,17 +44,18 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "로그인 성공"),
         @ApiResponse(responseCode = "401", description = "인증 실패")
     })
-    public void login(@RequestBody UserRequestDto userRequestDto, HttpServletResponse response)
+    public ResponseEntity<UserResponseDto> login(@RequestBody UserRequestDto userRequestDto, HttpServletResponse response)
         throws IOException {
-        userService.login(userRequestDto);
+        User user = userService.login(userRequestDto);
         // Access Token 생성
-        String accessToken = jwtUtil.createAccessToken(userRequestDto.getUsername());
+        String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getUsername());
         jwtUtil.addAccessTokenToCookie(accessToken, response);
         // Refresh Token 생성
-        String refreshToken = jwtUtil.createRefreshToken(userRequestDto.getUsername());
-        jwtUtil.addRefreshTokenToCookie(refreshToken, response);
+//        String refreshToken = jwtUtil.createRefreshToken(userRequestDto.getUsername());
+//        jwtUtil.addRefreshTokenToCookie(refreshToken, response);
 
-        String message = "로그인 성공";
-        jwtTokenError.messageToClient(response, 200, message, "success");
+        String successMessage = "로그인이 성공적으로 완료되었습니다.";
+        return ResponseEntity.ok().body(new UserResponseDto(successMessage, HttpStatus.OK));
+
     }
 }

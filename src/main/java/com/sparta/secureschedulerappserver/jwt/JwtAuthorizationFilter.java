@@ -3,6 +3,9 @@ package com.sparta.secureschedulerappserver.jwt;
 import com.sparta.secureschedulerappserver.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,28 +42,41 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 accessToken = jwtUtil.substringToken(accessToken);
                 Claims info = jwtUtil.getUserInfoFromToken(accessToken);
 
-                setAuthentication(info.getSubject());
-            }catch (Exception e){
-                log.error(e.getMessage());
+                Long userId = info.get("userId", Long.class);
+                String username = info.get("username", String.class);
+
+                setAuthentication(userId, username);
+            }catch (SecurityException | MalformedJwtException | SignatureException e) {
+                logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+                return;
+            } catch (ExpiredJwtException e) {
+                logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+                return;
+            } catch (UnsupportedJwtException e) {
+                logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+                return;
+            } catch (IllegalArgumentException e) {
+                logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
                 return;
             }
+
         }
 
         filterChain.doFilter(req, res);
     }
 
     // 인증 처리
-    public void setAuthentication(String username) {
+    public void setAuthentication(Long userId, String username) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(username);
+        Authentication authentication = createAuthentication(userId, username);
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
     }
 
     // 인증 객체 생성
-    private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    private Authentication createAuthentication(Long userId, String username) {
+        UserDetails userDetails = userDetailsService.getUser(userId, username);
         return new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
     }

@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void login(UserRequestDto userRequestDto) throws PasswordMismatchException {
+    public User login(UserRequestDto userRequestDto) throws PasswordMismatchException {
         String username = userRequestDto.getUsername();
         String password = userRequestDto.getPassword();
 
@@ -43,6 +43,8 @@ public class UserServiceImpl implements UserService {
         );
 
         validatePassword(user, password);
+
+        return user;
 
     }
 

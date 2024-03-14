@@ -1,6 +1,7 @@
 package com.sparta.secureschedulerappserver.service;
 
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
+import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.exception.PasswordMismatchException;
 
 public interface UserService {
@@ -12,5 +13,5 @@ public interface UserService {
      */
     void join(UserRequestDto userRequestDto);
 
-    void login(UserRequestDto userRequestDto) throws PasswordMismatchException;
+    User login(UserRequestDto userRequestDto) throws PasswordMismatchException;
 }
