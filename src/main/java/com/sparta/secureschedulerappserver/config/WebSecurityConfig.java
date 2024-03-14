@@ -6,6 +6,7 @@ import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,10 +52,11 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                .requestMatchers("/swagger-ui/**", "/v3/**", "/swagger-resources/**", "/webjars/**",
-                    "/favicon.ico").permitAll()
-                .requestMatchers("/user/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
+                .requestMatchers("/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
+                .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

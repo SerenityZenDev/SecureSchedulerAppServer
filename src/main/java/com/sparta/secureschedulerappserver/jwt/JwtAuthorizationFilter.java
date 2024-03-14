@@ -32,58 +32,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
         throws ServletException, IOException {
 
-        String accessTokenValue = jwtUtil.getAccessTokenFromRequest(req);
-        String claimToToken;
 
-        if (StringUtils.hasText(accessTokenValue)) {
-            // JWT 토큰 substring
-            accessTokenValue = jwtUtil.substringToken(accessTokenValue);
-            log.info(accessTokenValue);
-            claimToToken = accessTokenValue;
-
+        String accessToken = jwtUtil.getAccessTokenFromRequest(req);
+        if(StringUtils.hasText(accessToken)) {
             try{
-                if (!jwtUtil.validateAccessToken(accessTokenValue)) {
-                    jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
-                    return;
-                }
-            }catch (ExpiredJwtException e) {
-                logger.error("Expired JWT token, 만료된 JWT AccessToken 입니다.");
-                String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(req);
-                refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
+                accessToken = jwtUtil.substringToken(accessToken);
+                Claims info = jwtUtil.getUserInfoFromToken(accessToken);
 
-                if (StringUtils.hasText(refreshTokenValue) && jwtUtil.validateRefreshToken(refreshTokenValue)){
-                    String newAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserInfoFromToken(refreshTokenValue).getSubject());
-                    jwtUtil.addAccessTokenToCookie(newAccessToken, res);
-                    claimToToken = jwtUtil.substringToken(newAccessToken);
-                } else {
-                    jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
-                    return;
-                }
-            }
-
-
-            Claims info = jwtUtil.getUserInfoFromToken(claimToToken);
-
-            try {
                 setAuthentication(info.getSubject());
-            } catch (Exception e) {
-                jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
+            }catch (Exception e){
+                log.error(e.getMessage());
                 return;
             }
-        } else if (
-            req.getRequestURI().startsWith("/user/") ||
-                req.getRequestURI().startsWith("/swagger-ui/") ||
-                req.getRequestURI().startsWith("/v3/") ||
-                req.getRequestURI().startsWith("/swagger-resources/") ||
-                req.getRequestURI().startsWith("/webjars/") ||
-                req.getRequestURI().startsWith("/favicon.ico")
-        ) {
-            filterChain.doFilter(req, res);
-            return;
-        } else {
-
-            jwtTokenError.messageToClient(res, 400, "토큰에 문제", "failed");
-            return;
         }
 
         filterChain.doFilter(req, res);
