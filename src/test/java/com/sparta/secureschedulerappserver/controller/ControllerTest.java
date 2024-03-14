@@ -28,6 +28,7 @@ import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.entity.Comment;
 import com.sparta.secureschedulerappserver.entity.Schedule;
 import com.sparta.secureschedulerappserver.entity.User;
+import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
 import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
@@ -247,6 +248,8 @@ public class ControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
         }
+
+
 
 
 

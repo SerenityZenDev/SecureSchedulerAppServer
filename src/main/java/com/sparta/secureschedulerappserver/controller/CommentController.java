@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentServiceImpl commentService;
+    private final CommentServiceImpl commentServiceImpl;
 
     @PostMapping("")
     public CommentResponseDto createComment(
@@ -31,7 +31,7 @@ public class CommentController {
         @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return commentService.createComment(scheduleId,
+        return commentServiceImpl.createComment(scheduleId,
             commentRequestDto, userDetails);
     }
 
@@ -41,7 +41,7 @@ public class CommentController {
         @Valid @RequestBody CommentRequestDto commentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return commentService.updateComment(commentId,
+        return commentServiceImpl.updateComment(commentId,
             commentRequestDto, userDetails);
     }
 
@@ -50,7 +50,7 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        commentService.deleteComment(commentId, userDetails);
+        commentServiceImpl.deleteComment(commentId, userDetails);
         String successMessage = "삭제가 정상적으로 처리되었습니다.";
         return ResponseEntity.ok().body(new CommentDeleteDto(successMessage, HttpStatus.OK));
     }

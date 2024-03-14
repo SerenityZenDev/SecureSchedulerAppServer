@@ -44,7 +44,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "로그인 성공"),
         @ApiResponse(responseCode = "401", description = "인증 실패")
     })
-    public void fakeLogin(@RequestBody UserRequestDto userRequestDto, HttpServletResponse response)
+    public void login(@RequestBody UserRequestDto userRequestDto, HttpServletResponse response)
         throws IOException {
         userService.login(userRequestDto);
         // Access Token 생성
