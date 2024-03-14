@@ -6,6 +6,7 @@ import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.exception.PasswordMismatchException;
 import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
+import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.service.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,6 +29,7 @@ public class UserController {
 
     private final UserServiceImpl userService;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @PostMapping("/join")
     public ResponseEntity<UserResponseDto> join(@Valid @RequestBody UserRequestDto userRequestDto) {
@@ -51,8 +53,9 @@ public class UserController {
         String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getUsername());
         jwtUtil.addAccessTokenToCookie(accessToken, response);
         // Refresh Token 생성
-//        String refreshToken = jwtUtil.createRefreshToken(userRequestDto.getUsername());
-//        jwtUtil.addRefreshTokenToCookie(refreshToken, response);
+        String refreshToken = jwtUtil.createRefreshToken();
+        refreshTokenRedisRepository.save(accessToken, refreshToken);
+        System.out.println(refreshTokenRedisRepository.findByKey(accessToken));
 
         String successMessage = "로그인이 성공적으로 완료되었습니다.";
         return ResponseEntity.ok().body(new UserResponseDto(successMessage, HttpStatus.OK));

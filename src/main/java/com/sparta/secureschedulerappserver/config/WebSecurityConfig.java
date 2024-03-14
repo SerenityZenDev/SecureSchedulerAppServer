@@ -4,6 +4,7 @@ import com.sparta.secureschedulerappserver.filter.LoggingFilter;
 import com.sparta.secureschedulerappserver.jwt.JwtAuthorizationFilter;
 import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
+import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -23,8 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final JwtTokenError jwtTokenError;
     private final UserDetailsServiceImpl userDetailsService;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
 
     @Bean // Spring Security의 인증 매니저 생성 설정
@@ -37,7 +38,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, jwtTokenError);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, refreshTokenRedisRepository);
     }
 
     @Bean

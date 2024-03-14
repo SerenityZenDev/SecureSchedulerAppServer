@@ -1,5 +1,6 @@
 package com.sparta.secureschedulerappserver.jwt;
 
+import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -27,7 +28,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private final JwtTokenError jwtTokenError;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
 
     @Override
@@ -39,8 +40,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.getAccessTokenFromRequest(req);
         if(StringUtils.hasText(accessToken)) {
             try{
-                accessToken = jwtUtil.substringToken(accessToken);
-                Claims info = jwtUtil.getUserInfoFromToken(accessToken);
+                String subAccessToken = jwtUtil.substringToken(accessToken);
+                Claims info = jwtUtil.getUserInfoFromToken(subAccessToken);
 
                 Long userId = info.get("userId", Long.class);
                 String username = info.get("username", String.class);
@@ -50,8 +51,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
                 return;
             } catch (ExpiredJwtException e) {
-                logger.error("Expired JWT token, 만료된 JWT token 입니다.");
-                return;
+                if(refreshTokenRedisRepository.findByKey(accessToken).isEmpty()){
+                    logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+                    return;
+                }
+                Claims info = e.getClaims();
+
+                Long userId = info.get("userId", Long.class);
+                String username = info.get("username", String.class);
+
+                String newAccessToken = jwtUtil.createAccessToken(userId, username);
+                jwtUtil.addAccessTokenToCookie(newAccessToken, res);
+
+                refreshTokenRedisRepository.updateAccessToken(accessToken, newAccessToken);
+
+                setAuthentication(userId, username);
             } catch (UnsupportedJwtException e) {
                 logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
                 return;
