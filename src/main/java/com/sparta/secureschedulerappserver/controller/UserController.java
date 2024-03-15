@@ -3,8 +3,6 @@ package com.sparta.secureschedulerappserver.controller;
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.dto.UserResponseDto;
 import com.sparta.secureschedulerappserver.entity.User;
-import com.sparta.secureschedulerappserver.exception.PasswordMismatchException;
-import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.service.UserServiceImpl;
@@ -46,7 +44,8 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "로그인 성공"),
         @ApiResponse(responseCode = "401", description = "인증 실패")
     })
-    public ResponseEntity<UserResponseDto> login(@RequestBody UserRequestDto userRequestDto, HttpServletResponse response)
+    public ResponseEntity<UserResponseDto> login(@RequestBody UserRequestDto userRequestDto,
+        HttpServletResponse response)
         throws IOException {
         User user = userService.login(userRequestDto);
         // Access Token 생성

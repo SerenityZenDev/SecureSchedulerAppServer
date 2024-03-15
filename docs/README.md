@@ -34,7 +34,7 @@
 - 과제 내용 : 깃허브에서 clone or pull을 통해 코드를 가져오고 빌드하여 jar 파일 실행하기
 - 실제 내용 : EC2에서 도커를 이용해서 실행
 ### 과제 미포함 구현사항
-- jacoco 적용 (테스트 커버리지 53%)
+- jacoco 적용 (테스트 커버리지 56%)
 - swagger 적용 (http://bit.ly/4afup4O) - 도메인을 구입하지 않아 http 상태입니다
 - redis를 이용한 refreshToken 적용
 - 도커를 이용한 호스팅

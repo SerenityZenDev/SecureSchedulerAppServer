@@ -2,7 +2,6 @@ package com.sparta.secureschedulerappserver.config;
 
 import com.sparta.secureschedulerappserver.filter.LoggingFilter;
 import com.sparta.secureschedulerappserver.jwt.JwtAuthorizationFilter;
-import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsServiceImpl;

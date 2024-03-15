@@ -62,7 +62,7 @@ public class RestControllerAdviceTest {
     @MockBean
     private JwtUtil jwtUtil;
 
-ㄱ
+
     @MockBean
     private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
