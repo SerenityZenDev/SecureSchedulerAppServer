@@ -3,7 +3,6 @@ package com.sparta.secureschedulerappserver.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -11,17 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.sparta.secureschedulerappserver.config.WebSecurityConfig;
-import com.sparta.secureschedulerappserver.dto.PageDto;
 import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.exception.NotFoundCommentException;
 import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
 import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
-import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import com.sparta.secureschedulerappserver.service.CommentServiceImpl;
-import com.sparta.secureschedulerappserver.service.ScheduleService;
 import com.sparta.secureschedulerappserver.service.ScheduleServiceImpl;
 import com.sparta.secureschedulerappserver.service.UserServiceImpl;
 import java.security.Principal;
@@ -33,16 +29,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@WebMvcTest(controllers = {ScheduleErrorController.class,UserController.class,ScheduleController.class,CommentController.class},
+@WebMvcTest(controllers = {ScheduleErrorController.class, UserController.class,
+    ScheduleController.class, CommentController.class},
     excludeFilters = {
         @ComponentScan.Filter(
             type = FilterType.ASSIGNABLE_TYPE,
@@ -67,9 +62,7 @@ public class RestControllerAdviceTest {
     @MockBean
     private JwtUtil jwtUtil;
 
-    @MockBean
-    private JwtTokenError jwtTokenError;
-
+ㄱ
     @MockBean
     private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
@@ -95,7 +88,8 @@ public class RestControllerAdviceTest {
         String password = "password";
         User testUser = new User(username, password);
         UserDetailsImpl testUserDetails = new UserDetailsImpl(testUser);
-        mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", testUserDetails.getAuthorities());
+        mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "",
+            testUserDetails.getAuthorities());
     }
 
     @Test

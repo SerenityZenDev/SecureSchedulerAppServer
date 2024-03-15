@@ -28,8 +28,6 @@ import com.sparta.secureschedulerappserver.dto.UserRequestDto;
 import com.sparta.secureschedulerappserver.entity.Comment;
 import com.sparta.secureschedulerappserver.entity.Schedule;
 import com.sparta.secureschedulerappserver.entity.User;
-import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
-import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
 import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
@@ -41,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,15 +48,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -75,6 +69,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 )
 @ActiveProfiles("test")
 public class ControllerTest {
+
     private MockMvc mvc;
 
     private Principal mockPrincipal;
@@ -88,8 +83,6 @@ public class ControllerTest {
     @MockBean
     private JwtUtil jwtUtil;
 
-    @MockBean
-    private JwtTokenError jwtTokenError;
 
     @MockBean
     private RefreshTokenRedisRepository refreshTokenRedisRepository;
@@ -118,13 +111,15 @@ public class ControllerTest {
         String password = "password";
         User testUser = new User(username, password);
         UserDetailsImpl testUserDetails = new UserDetailsImpl(testUser);
-        mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", testUserDetails.getAuthorities());
+        mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "",
+            testUserDetails.getAuthorities());
     }
 
 
     @Nested
     @DisplayName("UserController 테스트")
-    class userControllerTest{
+    class userControllerTest {
+
         @Test
         @DisplayName("회원 가입 처리")
         void testJoin() throws Exception {
@@ -146,7 +141,8 @@ public class ControllerTest {
 
     @Nested
     @DisplayName("ScheduleController 테스트")
-    class scheduleControllerTest{
+    class scheduleControllerTest {
+
         @Test
         @DisplayName("게시글 생성 테스트")
         public void testCreateSchedule() throws Exception {
@@ -241,8 +237,8 @@ public class ControllerTest {
             PageDto pageDto = PageDto.builder().currentPage(1).size(2).build();
 
             // UserRepository와 ScheduleRepository에서 테스트에 필요한 값을 반환하도록 설정
-            when(scheduleService.getSchedulesForUser(testUserDetails, pageDto)).thenReturn(scheduleList);
-
+            when(scheduleService.getSchedulesForUser(testUserDetails, pageDto)).thenReturn(
+                scheduleList);
 
             // when & then
             mvc.perform(get("/schedules/mySchedules")
@@ -252,10 +248,6 @@ public class ControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
         }
-
-
-
-
 
 
         @Test
@@ -298,14 +290,11 @@ public class ControllerTest {
         }
 
 
-
-
-
-
     }
+
     @Nested
     @DisplayName("CommentController 테스트")
-    class commentControllerTest{
+    class commentControllerTest {
 
         @Test
         //@WithMockUser(username = "testUser", password = "testPassword")
@@ -322,11 +311,12 @@ public class ControllerTest {
             comment.setCommentId(1L);
             CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
 
-            given(commentService.createComment(eq(1L), eq(commentRequestDto), eq(userDetails))).willReturn(commentResponseDto);
+            given(commentService.createComment(eq(1L), eq(commentRequestDto),
+                eq(userDetails))).willReturn(commentResponseDto);
 
             // when
             var action = mvc.perform(post("/schedules/{scheduleId}/comments", 1L)
-                    .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(commentRequestDto))
                 .principal(mockPrincipal));
 
@@ -350,7 +340,8 @@ public class ControllerTest {
             comment.setCommentId(1L);
             CommentResponseDto updatedCommentResponseDto = new CommentResponseDto(comment);
 
-            given(commentService.updateComment(eq(1L), eq(updatedCommentRequestDto), eq(userDetails))).willReturn(updatedCommentResponseDto);
+            given(commentService.updateComment(eq(1L), eq(updatedCommentRequestDto),
+                eq(userDetails))).willReturn(updatedCommentResponseDto);
 
             // when
             var action = mvc.perform(patch("/schedules/{scheduleId}/comments/{commentId}", 1L, 1L)
@@ -371,7 +362,8 @@ public class ControllerTest {
 
             User user = new User("testUser", "testPassword");
             UserDetailsImpl userDetails = new UserDetailsImpl(user);
-            CommentDeleteDto deleteResponse = new CommentDeleteDto("삭제가 정상적으로 처리되었습니다.", HttpStatus.OK);
+            CommentDeleteDto deleteResponse = new CommentDeleteDto("삭제가 정상적으로 처리되었습니다.",
+                HttpStatus.OK);
 
             // when
             var action = mvc.perform(delete("/schedules/{scheduleId}/comments/{commentId}", 1L, 1L)
@@ -386,15 +378,7 @@ public class ControllerTest {
         }
 
 
-
-
-
-
-
     }
-
-
-
 
 
 }
