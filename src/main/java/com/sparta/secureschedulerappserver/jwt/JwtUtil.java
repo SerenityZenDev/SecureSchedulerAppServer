@@ -30,7 +30,6 @@ public class JwtUtil {
 
     // Header KEY 값
     public static final String ACCESS_TOKEN_HEADER = "Access";
-    public static final String REFRESH_TOKEN_HEADER = "Refresh";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
@@ -97,20 +96,7 @@ public class JwtUtil {
             logger.error(e.getMessage());
         }
     }
-    public void addRefreshTokenToCookie(String token, HttpServletResponse res) {
-        try {
-            token = URLEncoder.encode(token, "utf-8")
-                .replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
-            Cookie cookie = new Cookie(REFRESH_TOKEN_HEADER, token); // Name-Value
-            cookie.setPath("/");
-
-            // Response 객체에 Cookie 추가
-            res.addCookie(cookie);
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
-        }
-    }
 
 
     // Cookie에 들어있던 JWT 토큰을 Substring
@@ -123,37 +109,7 @@ public class JwtUtil {
         throw new NullPointerException("Not Found Token");
     }
 
-    // JWT검증
-    // 토큰 검증
-    public boolean validateAccessToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-        } catch (UnsupportedJwtException e) {
-            logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-        }
-        return false;
-    }
 
-    public boolean validateRefreshToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-        } catch (ExpiredJwtException e) {
-            logger.error("Expired JWT token, 만료된 JWT token 입니다.");
-        } catch (UnsupportedJwtException e) {
-            logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-        }
-        return false;
-    }
 
     // JWT에서 사용자 정보 가져오기
     // 토큰에서 사용자 정보 가져오기
@@ -179,20 +135,4 @@ public class JwtUtil {
         return null;
     }
 
-    public String getRefreshTokenFromRequest(HttpServletRequest req) {
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(REFRESH_TOKEN_HEADER)) {
-                    try {
-                        return URLDecoder.decode(cookie.getValue(),
-                            "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-                    } catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
-                }
-            }
-        }
-        return null;
-    }
 }

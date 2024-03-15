@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.sparta.secureschedulerappserver.dto.PageDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleListResponseDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleRequestDto;
 import com.sparta.secureschedulerappserver.dto.ScheduleResponseDto;
@@ -24,6 +25,7 @@ import com.sparta.secureschedulerappserver.repository.ScheduleRepository;
 import com.sparta.secureschedulerappserver.repository.UserRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +39,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 
 @ExtendWith(MockitoExtension.class) // @Mock 사용을 위해 설정합니다.
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 class ScheduleServiceTest {
     @Mock
     private ScheduleRepository scheduleRepository;
@@ -121,43 +127,46 @@ class ScheduleServiceTest {
             // when & then
             assertThrows(NotFoundScheduleException.class, () -> scheduleService.readSchedule(scheduleId));
         }
-//        @Test
-//        @DisplayName("스케쥴 여러개 조회 테스트") // 추가 수정 필요
-//        void testReadSchedules() { // -
-//            // given
-//            User user1 = new User("user1", "password1");
-//            User user2 = new User("user2", "password2");
-//
-//            List<User> users = List.of(user1);
-//            when(userRepository.findAll()).thenReturn(users);
-//
-//            List<Schedule> user1Schedules = List.of(
-//                new Schedule("User 1 Schedule 1", "Content 1", user1),
-//                new Schedule("User 1 Schedule 2", "Content 2", user1)
-//            );
-//            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user1.getUserId())).thenReturn(user1Schedules);
-//
-//            List<Schedule> user2Schedules = List.of(
-//                new Schedule("User 2 Schedule 1", "Content 1", user2),
-//                new Schedule("User 2 Schedule 2", "Content 2", user2)
-//            );
-//            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user2.getUserId())).thenReturn(user2Schedules);
-//
-//            // when
-//            ScheduleListResponseDto responseDto = scheduleService.readSchedules();
-//
-//            // then
-//            assertNotNull(responseDto);
-//            assertEquals(2, responseDto.getScheduleByName().size()); // 두 사용자의 일정이 포함되어야 함
-//
-//            // 사용자 1의 일정 확인
-//            assertTrue(responseDto.getScheduleByName().containsKey("user1"));
-//            assertEquals(2, responseDto.getScheduleByName().get("user1").size());
-//
-//            // 사용자 2의 일정 확인
-//            assertTrue(responseDto.getScheduleByName().containsKey("user2"));
-//            assertEquals(2, responseDto.getScheduleByName().get("user2").size());
-//        }
+
+        @Test
+        @DisplayName("스케쥴 여러 개 조회 테스트")
+        void testReadSchedules() {
+            // given
+            User user1 = new User("user1", "password1");
+            user1.setUserId(1L); // UserId 설정
+            User user2 = new User("user2", "password2");
+            user2.setUserId(2L); // UserId 설정
+
+            List<User> users = List.of(user1, user2);
+            when(userRepository.findAll()).thenReturn(users);
+
+            List<Schedule> user1Schedules = List.of(
+                new Schedule("User 1 Schedule 1", "Content 1", user1),
+                new Schedule("User 1 Schedule 2", "Content 2", user1)
+            );
+            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user1.getUserId())).thenReturn(user1Schedules);
+
+            List<Schedule> user2Schedules = List.of(
+                new Schedule("User 2 Schedule 1", "Content 1", user2),
+                new Schedule("User 2 Schedule 2", "Content 2", user2)
+            );
+            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user2.getUserId())).thenReturn(user2Schedules);
+
+            // when
+            ScheduleListResponseDto responseDto = scheduleService.readSchedules();
+
+            // then
+            assertNotNull(responseDto);
+            assertEquals(2, responseDto.getScheduleByName().size()); // 두 사용자의 일정이 포함되어야 함
+
+            // 사용자 1의 일정 확인
+            assertTrue(responseDto.getScheduleByName().containsKey(user1.getUsername()));
+            assertEquals(2, responseDto.getScheduleByName().get(user1.getUsername()).size());
+
+            // 사용자 2의 일정 확인
+            assertTrue(responseDto.getScheduleByName().containsKey(user2.getUsername()));
+            assertEquals(2, responseDto.getScheduleByName().get(user2.getUsername()).size());
+        }
 
 
 
@@ -189,16 +198,13 @@ class ScheduleServiceTest {
         @Test
         public void readUncompleteSchedulesTest() {
             // given
-            User user = new User();
-            user.setUsername("testUser");
-            user.setUserId(1L);
+            User user = new User(1L, "testUser");
             List<User> users = Collections.singletonList(user);
             given(userRepository.findAll()).willReturn(users);
 
-            Schedule schedule1 = new Schedule();
+            Schedule schedule1 = new Schedule("test", "content", user);
             schedule1.complete();
-            schedule1.setHidden(false);
-            schedule1.setUser(user);
+            schedule1.optionHidden();
             List<Schedule> schedules = Collections.singletonList(schedule1);
             given(scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(user.getUserId())).willReturn(schedules);
 
@@ -211,68 +217,34 @@ class ScheduleServiceTest {
             assertEquals(1, result.getScheduleByName().get(user.getUsername()).size());
         }
 
-//        @Test
-//        @DisplayName("미완료 일정 조회 테스트")
-//        void testReadUncompleteSchedules() {
-//            // given
-//            User user1 = new User("user1", "password1");
-//            User user2 = new User("user2", "password2");
-//            Schedule schedule1 = new Schedule("Schedule 1", "Content 1", user1);
-//            Schedule schedule2 = new Schedule("Schedule 2", "Content 2", user1);
-//            Schedule schedule3 = new Schedule("Schedule 3", "Content 3", user2);
-//            Schedule schedule4 = new Schedule("Schedule 4", "Content 4", user2);
-//            schedule2.setCompleted(true); // schedule2를 완료된 일정으로 설정
-//
-//            List<User> users = List.of(user1, user2);
-//            List<Schedule> schedules = List.of(schedule1,schedule2,schedule3,schedule4);
-//
-//            given(userRepository.findAll()).willReturn(users);
-//            given(scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(anyLong()))
-//                .willReturn(schedules);
-//
-//            // when
-//            ScheduleListResponseDto responseDto = scheduleService.readUncompleteSchedules();
-//
-//            // then
-//            assertNotNull(responseDto);
-//            Map<String, List<ScheduleResponseDto>> scheduleByName = responseDto.getScheduleByName();
-//            assertNotNull(scheduleByName);
-//
-//            // user1의 일정은 schedule2를 제외하고 1개여야 함
-//            assertTrue(scheduleByName.containsKey("user1"));
-//            assertEquals(1, scheduleByName.get("user1").size());
-//
-//            // user2의 일정은 모두 2개여야 함
-//            assertTrue(scheduleByName.containsKey("user2"));
-//            assertEquals(2, scheduleByName.get("user2").size());
-//        }
 
 
 
-//        @Test
-//        @DisplayName("제목에 특정 텍스트를 포함하는 일정을 찾는 테스트")
-//        void testFindSchedulesContainingText() { // -
-//            // given
-//            User fakeUser = new User("fakeUser", "12345678");
-//            String searchText = "meeting";
-//            Schedule schedule1 = new Schedule("Meeting with client","1", fakeUser);
-//            Schedule schedule2 = new Schedule("Team meeting", "2",fakeUser);
-//            Schedule schedule3 = new Schedule("Project review", "3", fakeUser);
-//
-//            List<Schedule> mockSchedules = List.of(schedule1, schedule2, schedule3);
-//
-//            when(scheduleRepository.findAllByTitleContainingAndHiddenFalse(searchText))
-//                .thenReturn(mockSchedules);
-//
-//            // when
-//            List<ScheduleResponseDto> result = scheduleService.findSchedules(searchText);
-//
-//            // then
-//            assertNotNull(result);
-//            assertEquals(2, result.size()); // "Meeting with client"과 "Team meeting" 두 개의 일정이 예상된다.
-//            assertEquals("Meeting with client", result.get(0).getTitle());
-//            assertEquals("Team meeting", result.get(1).getTitle());
-//        }
+
+        @Test
+        @DisplayName("제목에 특정 텍스트를 포함하는 일정을 찾는 테스트")
+        void testFindSchedules() {
+            // given
+            String searchText = "meeting";
+            User user = new User("user1", "password1");
+            List<Schedule> schedules = List.of(
+                new Schedule("Weekly meeting", "Content 1", user),
+                new Schedule("Project meeting", "Content 2", user)
+            );
+
+            when(scheduleRepository.findAllByTitleContainingAndHiddenFalse(searchText)).thenReturn(schedules);
+
+            // when
+            List<ScheduleResponseDto> result = scheduleService.findSchedules(searchText);
+
+            // then
+            assertNotNull(result); // 결과가 null이 아닌지 확인
+            assertEquals(2, result.size()); // 조회 결과의 크기가 기대하는 값인 2인지 확인
+
+            // 반환된 ScheduleResponseDto 리스트의 내용 검증 (선택적)
+            assertEquals("Weekly meeting", result.get(0).getTitle());
+            assertEquals("Project meeting", result.get(1).getTitle());
+        }
 
         @Test
         @DisplayName("제목에 특정 텍스트를 포함하지 않는 일정을 찾는 테스트")
@@ -295,6 +267,100 @@ class ScheduleServiceTest {
             // then
             assertNotNull(result);
             assertEquals(0, result.size()); // 일치하는 일정이 없으므로 결과 리스트는 비어 있어야 한다.
+        }
+
+        @Test
+        void showSchedulesTest() {
+            // given
+            User fakeUser = new User("fakeUser", "12345678");
+            String keyword = "meeting";
+            PageDto pageDto = PageDto.builder().currentPage(1).size(1).build(); // 예를 들어 페이지 0, 사이즈 10
+            List<Schedule> foundSchedules = Arrays.asList(
+                new Schedule("Meeting with client", "Discuss project", fakeUser),
+                new Schedule("Team meeting", "Weekly update", fakeUser)
+            );
+
+            // Mocking
+            when(scheduleRepository.searchByTitle(keyword, pageDto.toPageable()))
+                .thenReturn(new PageImpl<>(foundSchedules));
+
+            // when
+            List<ScheduleResponseDto> result = scheduleService.showSchedules(keyword, pageDto);
+
+            // then
+            assertEquals(2, result.size()); // 반환된 DTO 리스트의 크기 검증
+            assertEquals("Meeting with client", result.get(0).getTitle()); // 첫 번째 항목의 제목 검증
+            assertEquals("Team meeting", result.get(1).getTitle()); // 두 번째 항목의 제목 검증
+        }
+
+        @Test
+        void hideScheduleTest() {
+            // given
+            Long scheduleId = 1L;
+            User user = new User("user1", "password1");
+            UserDetailsImpl userDetails = new UserDetailsImpl(user);
+            Schedule schedule = new Schedule("Team meeting", "Weekly update", user);
+
+            when(userRepository.findByUsername(userDetails.getUsername())).thenReturn(java.util.Optional.of(user));
+            when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(schedule));
+
+            // when
+            ScheduleResponseDto responseDto = scheduleService.hideSchedule(scheduleId, userDetails);
+
+            // then
+            verify(scheduleRepository).findById(anyLong());
+            verify(userRepository).findByUsername(userDetails.getUsername());
+            assertEquals(user.getUsername(), responseDto.getUsername()); // 사용자 이름 검증
+            assertEquals(schedule.getTitle(), responseDto.getTitle()); // 숨겨진 일정의 제목 검증
+            assertTrue(responseDto.isHidden()); // 일정이 숨겨졌는지 검증
+        }
+
+        @Test
+        void completeScheduleTest() {
+            // given
+            Long scheduleId = 1L;
+            User user = new User("user1", "password1");
+            UserDetailsImpl userDetails = new UserDetailsImpl(user);
+            Schedule schedule = new Schedule("Team meeting", "Weekly update", user);
+
+            when(userRepository.findByUsername(userDetails.getUsername())).thenReturn(java.util.Optional.of(user));
+            when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(schedule));
+
+            // when
+            ScheduleResponseDto responseDto = scheduleService.completeSchedule(scheduleId, userDetails);
+
+            // then
+            verify(scheduleRepository).findById(anyLong());
+            verify(userRepository).findByUsername(userDetails.getUsername());
+            assertEquals(user.getUsername(), responseDto.getUsername()); // 사용자 이름 검증
+            assertEquals(schedule.getTitle(), responseDto.getTitle()); // 완료된 일정의 제목 검증
+            assertTrue(responseDto.isCompleted()); // 일정이 완료되었는지 검증
+        }
+
+        @Test
+        void getSchedulesForUserTest() {
+            // given
+            User user = new User("user1", "password1");
+            UserDetailsImpl userDetails = new UserDetailsImpl(user);
+            userDetails.getUser().setUserId(1L); // 사용자 ID 설정
+            PageDto pageDto =PageDto.builder().currentPage(1).size(1).build(); // 예: 페이지 0에서 시작, 페이지 당 10개 항목
+
+            List<Schedule> foundSchedules = Arrays.asList(
+                new Schedule("Meeting with client", "Discuss project", userDetails.getUser()),
+                new Schedule("Team meeting", "Weekly update", userDetails.getUser())
+            );
+            Page<Schedule> schedulesPage = new PageImpl<>(foundSchedules);
+
+            when(userRepository.findById(userDetails.getUser().getUserId())).thenReturn(java.util.Optional.of(userDetails.getUser()));
+            when(scheduleRepository.getSchedulesForUser(any(Long.class), any(Pageable.class))).thenReturn(schedulesPage);
+
+            // when
+            List<ScheduleResponseDto> result = scheduleService.getSchedulesForUser(userDetails, pageDto);
+
+            // then
+            assertEquals(2, result.size()); // 반환된 DTO 리스트의 크기 검증
+            assertEquals("Meeting with client", result.get(0).getTitle()); // 첫 번째 항목의 제목 검증
+            assertEquals("Team meeting", result.get(1).getTitle()); // 두 번째 항목의 제목 검증
         }
     }
 
