@@ -18,6 +18,7 @@ import com.sparta.secureschedulerappserver.exception.NotFoundScheduleException;
 import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
 import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
+import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import com.sparta.secureschedulerappserver.service.CommentServiceImpl;
 import com.sparta.secureschedulerappserver.service.ScheduleService;
@@ -68,6 +69,9 @@ public class RestControllerAdviceTest {
 
     @MockBean
     private JwtTokenError jwtTokenError;
+
+    @MockBean
+    private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @Autowired
     private WebApplicationContext context;

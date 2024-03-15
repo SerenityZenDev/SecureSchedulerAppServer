@@ -31,6 +31,7 @@ import com.sparta.secureschedulerappserver.entity.User;
 import com.sparta.secureschedulerappserver.exception.NotFoundUserException;
 import com.sparta.secureschedulerappserver.jwt.JwtTokenError;
 import com.sparta.secureschedulerappserver.jwt.JwtUtil;
+import com.sparta.secureschedulerappserver.redis.RefreshTokenRedisRepository;
 import com.sparta.secureschedulerappserver.security.UserDetailsImpl;
 import com.sparta.secureschedulerappserver.service.CommentServiceImpl;
 import com.sparta.secureschedulerappserver.service.ScheduleServiceImpl;
@@ -89,6 +90,9 @@ public class ControllerTest {
 
     @MockBean
     private JwtTokenError jwtTokenError;
+
+    @MockBean
+    private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @MockBean
     CommentServiceImpl commentService;
