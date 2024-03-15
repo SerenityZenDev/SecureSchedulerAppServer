@@ -28,16 +28,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -47,6 +44,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ExtendWith(MockitoExtension.class) // @Mock 사용을 위해 설정합니다.
 @ActiveProfiles("test")
 class ScheduleServiceTest {
+
     @Mock
     private ScheduleRepository scheduleRepository;
 
@@ -59,19 +57,20 @@ class ScheduleServiceTest {
     @Nested
     @DisplayName("일정 생성 관련 테스트")
     class CreateScheduleTests {
+
         @Test
         @DisplayName("일정 생성 테스트")
         void testCreateSchedule() {
             // given
             ScheduleRequestDto requestDto = new ScheduleRequestDto("새로운 일정", "일정 내용");
 
-
             User user = new User("testUser", "password");
             UserDetailsImpl userDetails = new UserDetailsImpl(user);
             when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
 
             // when
-            ScheduleResponseDto responseDto = scheduleService.createSchedule(requestDto, userDetails);
+            ScheduleResponseDto responseDto = scheduleService.createSchedule(requestDto,
+                userDetails);
 
             // then
             assertNotNull(responseDto);
@@ -81,6 +80,7 @@ class ScheduleServiceTest {
             // scheduleRepository.save() 메서드가 한 번 호출되고, 어떤 Schedule 객체를 매개변수로 받아 호출되었는지를 검증
             verify(scheduleRepository, times(1)).save(any(Schedule.class));
         }
+
         @Test
         @DisplayName("사용자가 없을 때 예외 발생 확인")
         void testCreateSchedule_UserNotFound() {
@@ -92,17 +92,19 @@ class ScheduleServiceTest {
 
             // when
             // then
-            assertThrows(NotFoundUserException.class, () -> scheduleService.createSchedule(requestDto, userDetails));
+            assertThrows(NotFoundUserException.class,
+                () -> scheduleService.createSchedule(requestDto, userDetails));
             verify(scheduleRepository, never()).save(any());
         }
     }
 
     @Nested
     @DisplayName("스케쥴 조회 관련 테스트")
-    class ReadScheduleTest{
+    class ReadScheduleTest {
+
         @Test
         @DisplayName("스케쥴 1개 조회 테스트")
-        void testReadOneTrue(){
+        void testReadOneTrue() {
             // given
             Long scheduleId = 1L;
             Schedule schedule = new Schedule("Test Title", "Test Content", new User());
@@ -125,7 +127,8 @@ class ScheduleServiceTest {
             when(scheduleRepository.findById(scheduleId)).thenReturn(Optional.empty());
 
             // when & then
-            assertThrows(NotFoundScheduleException.class, () -> scheduleService.readSchedule(scheduleId));
+            assertThrows(NotFoundScheduleException.class,
+                () -> scheduleService.readSchedule(scheduleId));
         }
 
         @Test
@@ -144,13 +147,15 @@ class ScheduleServiceTest {
                 new Schedule("User 1 Schedule 1", "Content 1", user1),
                 new Schedule("User 1 Schedule 2", "Content 2", user1)
             );
-            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user1.getUserId())).thenReturn(user1Schedules);
+            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user1.getUserId())).thenReturn(
+                user1Schedules);
 
             List<Schedule> user2Schedules = List.of(
                 new Schedule("User 2 Schedule 1", "Content 1", user2),
                 new Schedule("User 2 Schedule 2", "Content 2", user2)
             );
-            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user2.getUserId())).thenReturn(user2Schedules);
+            when(scheduleRepository.findByUser_UserIdAndHiddenFalse(user2.getUserId())).thenReturn(
+                user2Schedules);
 
             // when
             ScheduleListResponseDto responseDto = scheduleService.readSchedules();
@@ -169,10 +174,9 @@ class ScheduleServiceTest {
         }
 
 
-
         @Test
         @DisplayName("자신이 작성한 스케쥴 조회")
-        void testreadMySchedule(){
+        void testreadMySchedule() {
             // given
             User user1 = new User("user1", "password1");
             UserDetailsImpl userDetails = new UserDetailsImpl(user1);
@@ -183,7 +187,8 @@ class ScheduleServiceTest {
                 new Schedule("User 1 Schedule 1", "Content 1", user1),
                 new Schedule("User 1 Schedule 2", "Content 2", user1)
             );
-            when(scheduleRepository.findByUser_UserId(user1.getUserId())).thenReturn(user1Schedules);
+            when(scheduleRepository.findByUser_UserId(user1.getUserId())).thenReturn(
+                user1Schedules);
 
             // when
             ScheduleListResponseDto responseDto = scheduleService.readMySchedules(userDetails);
@@ -206,7 +211,8 @@ class ScheduleServiceTest {
             schedule1.complete();
             schedule1.optionHidden();
             List<Schedule> schedules = Collections.singletonList(schedule1);
-            given(scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(user.getUserId())).willReturn(schedules);
+            given(scheduleRepository.findByUser_UserIdAndIsCompletedFalseAndHiddenFalse(
+                user.getUserId())).willReturn(schedules);
 
             // when
             ScheduleListResponseDto result = scheduleService.readUncompleteSchedules();
@@ -216,9 +222,6 @@ class ScheduleServiceTest {
             assertTrue(result.getScheduleByName().containsKey(user.getUsername()));
             assertEquals(1, result.getScheduleByName().get(user.getUsername()).size());
         }
-
-
-
 
 
         @Test
@@ -232,7 +235,8 @@ class ScheduleServiceTest {
                 new Schedule("Project meeting", "Content 2", user)
             );
 
-            when(scheduleRepository.findAllByTitleContainingAndHiddenFalse(searchText)).thenReturn(schedules);
+            when(scheduleRepository.findAllByTitleContainingAndHiddenFalse(searchText)).thenReturn(
+                schedules);
 
             // when
             List<ScheduleResponseDto> result = scheduleService.findSchedules(searchText);
@@ -253,7 +257,7 @@ class ScheduleServiceTest {
             User fakeUser = new User("fakeUser", "12345678");
             String searchText = "meeting";
             Schedule schedule1 = new Schedule("Project kickoff", "1", fakeUser);
-            Schedule schedule2 = new Schedule("Weekly report", "2",fakeUser);
+            Schedule schedule2 = new Schedule("Weekly report", "2", fakeUser);
 
             List<Schedule> mockSchedules = List.of(schedule1, schedule2);
             List<Schedule> readSchduleResult = new ArrayList<>();
@@ -274,7 +278,8 @@ class ScheduleServiceTest {
             // given
             User fakeUser = new User("fakeUser", "12345678");
             String keyword = "meeting";
-            PageDto pageDto = PageDto.builder().currentPage(1).size(1).build(); // 예를 들어 페이지 0, 사이즈 10
+            PageDto pageDto = PageDto.builder().currentPage(1).size(1)
+                .build(); // 예를 들어 페이지 0, 사이즈 10
             List<Schedule> foundSchedules = Arrays.asList(
                 new Schedule("Meeting with client", "Discuss project", fakeUser),
                 new Schedule("Team meeting", "Weekly update", fakeUser)
@@ -301,8 +306,10 @@ class ScheduleServiceTest {
             UserDetailsImpl userDetails = new UserDetailsImpl(user);
             Schedule schedule = new Schedule("Team meeting", "Weekly update", user);
 
-            when(userRepository.findByUsername(userDetails.getUsername())).thenReturn(java.util.Optional.of(user));
-            when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(schedule));
+            when(userRepository.findByUsername(userDetails.getUsername())).thenReturn(
+                java.util.Optional.of(user));
+            when(scheduleRepository.findById(scheduleId)).thenReturn(
+                java.util.Optional.of(schedule));
 
             // when
             ScheduleResponseDto responseDto = scheduleService.hideSchedule(scheduleId, userDetails);
@@ -323,11 +330,14 @@ class ScheduleServiceTest {
             UserDetailsImpl userDetails = new UserDetailsImpl(user);
             Schedule schedule = new Schedule("Team meeting", "Weekly update", user);
 
-            when(userRepository.findByUsername(userDetails.getUsername())).thenReturn(java.util.Optional.of(user));
-            when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(schedule));
+            when(userRepository.findByUsername(userDetails.getUsername())).thenReturn(
+                java.util.Optional.of(user));
+            when(scheduleRepository.findById(scheduleId)).thenReturn(
+                java.util.Optional.of(schedule));
 
             // when
-            ScheduleResponseDto responseDto = scheduleService.completeSchedule(scheduleId, userDetails);
+            ScheduleResponseDto responseDto = scheduleService.completeSchedule(scheduleId,
+                userDetails);
 
             // then
             verify(scheduleRepository).findById(anyLong());
@@ -343,7 +353,8 @@ class ScheduleServiceTest {
             User user = new User("user1", "password1");
             UserDetailsImpl userDetails = new UserDetailsImpl(user);
             userDetails.getUser().setUserId(1L); // 사용자 ID 설정
-            PageDto pageDto =PageDto.builder().currentPage(1).size(1).build(); // 예: 페이지 0에서 시작, 페이지 당 10개 항목
+            PageDto pageDto = PageDto.builder().currentPage(1).size(1)
+                .build(); // 예: 페이지 0에서 시작, 페이지 당 10개 항목
 
             List<Schedule> foundSchedules = Arrays.asList(
                 new Schedule("Meeting with client", "Discuss project", userDetails.getUser()),
@@ -351,11 +362,14 @@ class ScheduleServiceTest {
             );
             Page<Schedule> schedulesPage = new PageImpl<>(foundSchedules);
 
-            when(userRepository.findById(userDetails.getUser().getUserId())).thenReturn(java.util.Optional.of(userDetails.getUser()));
-            when(scheduleRepository.getSchedulesForUser(any(Long.class), any(Pageable.class))).thenReturn(schedulesPage);
+            when(userRepository.findById(userDetails.getUser().getUserId())).thenReturn(
+                java.util.Optional.of(userDetails.getUser()));
+            when(scheduleRepository.getSchedulesForUser(any(Long.class),
+                any(Pageable.class))).thenReturn(schedulesPage);
 
             // when
-            List<ScheduleResponseDto> result = scheduleService.getSchedulesForUser(userDetails, pageDto);
+            List<ScheduleResponseDto> result = scheduleService.getSchedulesForUser(userDetails,
+                pageDto);
 
             // then
             assertEquals(2, result.size()); // 반환된 DTO 리스트의 크기 검증
@@ -366,7 +380,8 @@ class ScheduleServiceTest {
 
     @Nested
     @DisplayName("일정 수정 테스트")
-    class updateScheduleTest{
+    class updateScheduleTest {
+
         @Test
         @DisplayName("일정 업데이트 테스트 - 성공")
         void testUpdateSchedule_Success() {
@@ -374,13 +389,16 @@ class ScheduleServiceTest {
             User user = new User("username", "password");
             UserDetailsImpl userDetails = new UserDetailsImpl(user);
             Schedule schedule = new Schedule("Title", "Content", user);
-            ScheduleRequestDto scheduleRequestDto = new ScheduleRequestDto("New Title", "New Content");
+            ScheduleRequestDto scheduleRequestDto = new ScheduleRequestDto("New Title",
+                "New Content");
 
-            given(userRepository.findByUsername(userDetails.getUsername())).willReturn(Optional.of(user));
+            given(userRepository.findByUsername(userDetails.getUsername())).willReturn(
+                Optional.of(user));
             given(scheduleRepository.findById(anyLong())).willReturn(Optional.of(schedule));
 
             // When
-            ScheduleResponseDto responseDto = scheduleService.updateSchedule(1L, scheduleRequestDto, userDetails);
+            ScheduleResponseDto responseDto = scheduleService.updateSchedule(1L, scheduleRequestDto,
+                userDetails);
 
             // Then
             assertNotNull(responseDto);
@@ -398,9 +416,11 @@ class ScheduleServiceTest {
             User fakeUser = new User("fakeUser", "password"); // fakeUser로 변경
 
             Schedule schedule = new Schedule("Title", "Content", fakeUser);
-            ScheduleRequestDto scheduleRequestDto = new ScheduleRequestDto("New Title", "New Content");
+            ScheduleRequestDto scheduleRequestDto = new ScheduleRequestDto("New Title",
+                "New Content");
 
-            given(userRepository.findByUsername(userDetails.getUsername())).willReturn(Optional.of(user));
+            given(userRepository.findByUsername(userDetails.getUsername())).willReturn(
+                Optional.of(user));
             given(scheduleRepository.findById(anyLong())).willReturn(Optional.of(schedule));
 
             // When // Then
@@ -414,9 +434,11 @@ class ScheduleServiceTest {
             // Given
             User user = new User("username", "password");
             UserDetailsImpl userDetails = new UserDetailsImpl(user);
-            ScheduleRequestDto scheduleRequestDto = new ScheduleRequestDto("New Title", "New Content");
+            ScheduleRequestDto scheduleRequestDto = new ScheduleRequestDto("New Title",
+                "New Content");
 
-            given(userRepository.findByUsername(userDetails.getUsername())).willReturn(Optional.of(new User()));
+            given(userRepository.findByUsername(userDetails.getUsername())).willReturn(
+                Optional.of(new User()));
             given(scheduleRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // When / Then

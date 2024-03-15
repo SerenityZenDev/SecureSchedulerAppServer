@@ -1,7 +1,7 @@
 package com.sparta.secureschedulerappserver.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.sparta.secureschedulerappserver.dto.UserRequestDto;
@@ -44,13 +44,14 @@ public class UserServiceTest {
         // 회원 중복 확인을 위한 Mock 설정
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(existingUser));
 
-         // then
+        // then
         assertThrows(DuplicateUsernameException.class, () -> userService.join(userRequestDto));
     }
 
     @Nested
     @DisplayName("로그인 테스트")
     class JoinTest {
+
         @Test
         void loginSuccessTest() throws PasswordMismatchException {
             // given
@@ -62,7 +63,8 @@ public class UserServiceTest {
             String encodedPassword = "encodedTestPassword";
             User expectedUser = new User(username, encodedPassword);
 
-            when(userRepository.findByUsername(username)).thenReturn(java.util.Optional.of(expectedUser));
+            when(userRepository.findByUsername(username)).thenReturn(
+                java.util.Optional.of(expectedUser));
             // 실제 비밀번호와 인코딩된 비밀번호가 일치한다고 가정
             when(passwordEncoder.matches(password, expectedUser.getPassword())).thenReturn(true);
 

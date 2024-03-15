@@ -1,13 +1,9 @@
 package com.sparta.secureschedulerappserver.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +49,7 @@ public class JwtUtil {
 
     // 1. JWT 생성
     // 토큰 생성
-    public String createAccessToken(Long userId ,String username) {
+    public String createAccessToken(Long userId, String username) {
         Date date = new Date();
 
         return BEARER_PREFIX +
@@ -98,7 +94,6 @@ public class JwtUtil {
     }
 
 
-
     // Cookie에 들어있던 JWT 토큰을 Substring
     // JWT 토큰 substring
     public String substringToken(String tokenValue) {
@@ -108,7 +103,6 @@ public class JwtUtil {
         logger.error("Not Found Token");
         throw new NullPointerException("Not Found Token");
     }
-
 
 
     // JWT에서 사용자 정보 가져오기
